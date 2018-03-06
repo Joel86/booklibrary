@@ -29,41 +29,42 @@ class DefaultRegistrationService implements RegistrationService {
 	}
 	@Override
 	@Transactional(readOnly = false, isolation = Isolation.READ_COMMITTED)
-	public void register(long userid, Book restBook) {
+	public void register(long userid, Book book) {
 		Optional<User> optionalUser = userService.read(userid);
-		if(optionalUser.isPresent()) {
-			Book book = new Book(restBook.getIsbn10(), restBook.getIsbn13(), restBook.getTitle(), 
-					restBook.getPages(), restBook.getYear(), restBook.getThumbnailUrl());
-			if(!bookService.findByIsbn(restBook.getIsbn10()).isPresent()) {
-				for(Author author : restBook.getAuthors()) {
-					if(authorService.findByNameAndSurname(author.getName(), author.getSurname()).isPresent()) {
-						book.add(authorService.findByNameAndSurname(author.getName(), author.getSurname()).get());
+		if(optionalUser.isPresent()) {		
+			Optional<Book> optionalBook = bookService.findByIsbn(book.getIsbn10());
+			if(optionalBook.isPresent()) {		
+				book = optionalBook.get();
+			} else {
+				for(Author author : book.getAuthors()) {
+					Optional<Author> optionalAuthor = authorService.findByNameAndSurname(
+							author.getName(), author.getSurname());
+					if(optionalAuthor.isPresent()) {
+						book.add(optionalAuthor.get());
 					} else {
 						authorService.create(author);
 						book.add(author);
 					}
 				}
-				for(Genre genre : restBook.getGenres()) {
-					if(genreService.findByName(genre.getName()).isPresent()) {
-						book.add(genreService.findByName(genre.getName()).get());
+				for(Genre genre : book.getGenres()) {
+					Optional<Genre> optionalGenre = genreService.findByName(genre.getName());
+					if(optionalGenre.isPresent()) {
+						book.add(optionalGenre.get());
 					} else {	
 						genreService.create(genre);
 						book.add(genre);
 					}
 				}
-				if(restBook.getPublisher() != null) {
-					String publisherName = restBook.getPublisher().getName();
-					if(publisherService.findByName(publisherName).isPresent()) {
-						book.setPublisher(publisherService.findByName(publisherName).get());
-					} else {
-						Publisher publisher = new Publisher(publisherName);
-						publisherService.create(publisher);
-						book.setPublisher(publisher);
-					}
+				Optional<Publisher> optionalPublisher = publisherService.findByName(
+						book.getPublisher().getName());
+				if(optionalPublisher.isPresent()) {
+						book.setPublisher(optionalPublisher.get());
+				} else {
+					Publisher publisher = book.getPublisher();
+					publisherService.create(publisher);
+					book.setPublisher(publisher);
 				}
 				bookService.create(book);
-			} else {
-				book = bookService.findByIsbn(restBook.getIsbn10()).get();
 			}
 			optionalUser.get().add(book);
 		}
