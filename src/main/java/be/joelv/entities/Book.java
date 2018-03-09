@@ -1,10 +1,8 @@
 package be.joelv.entities;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -57,14 +55,14 @@ public class Book implements Serializable {
 		joinColumns = @JoinColumn(name = "bookId"), 
 		inverseJoinColumns = @JoinColumn(name = "authorId"))
 	@Valid
-	private List<Author> authors = new ArrayList<>();
+	private Set<Author> authors = new LinkedHashSet<>();
 	@ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	@JoinTable(
 		name = "book_genres", 
 		joinColumns = @JoinColumn(name = "bookId"), 
 		inverseJoinColumns = @JoinColumn(name = "genreId"))
 	@Valid
-	private List<Genre> genres = new ArrayList<>();
+	private Set<Genre> genres = new LinkedHashSet<>();
 	@ManyToMany(mappedBy = "books", 
 			cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	@Valid
@@ -78,8 +76,8 @@ public class Book implements Serializable {
 		this.pages = pages;
 		this.year = year;
 		this.thumbnailUrl = thumbnailUrl;
-		authors = new ArrayList<>();
-		genres = new ArrayList<>();
+		authors = new LinkedHashSet<>();
+		genres = new LinkedHashSet<>();
 	}
 	
 	public long getId() {
@@ -142,8 +140,8 @@ public class Book implements Serializable {
 			author.remove(this);
 		}
 	}
-	public List<Author> getAuthors() {
-		return new ArrayList<>(authors);
+	public Set<Author> getAuthors() {
+		return Collections.unmodifiableSet(authors);
 	}
 	public void add(Genre genre) {
 		genres.add(genre);
@@ -157,8 +155,8 @@ public class Book implements Serializable {
 			genre.remove(this);
 		}
 	}
-	public List<Genre> getGenres() {
-		return new ArrayList<>(genres);
+	public Set<Genre> getGenres() {
+		return Collections.unmodifiableSet(genres);
 	}
 	public void add(User user) {
 		users.add(user);

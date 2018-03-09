@@ -1,5 +1,6 @@
 package be.joelv.web;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
@@ -35,17 +36,23 @@ class BookController {
 	private final BookService bookService;
 	private final BookDataService bookDataService;
 	private final UserService userService;
+	private final String bookDataURL;
+	private final String apiKey;
 	BookController(RegistrationService registrationService, BookService bookService, 
-			BookDataService bookDataService, UserService userService) {
+			BookDataService bookDataService, UserService userService, 
+			@Value ("${openLibraryData}") String bookDataURL, 
+			@Value ("${apiKey}") String apiKey) {
 		this.registrationService = registrationService;
 		this.bookService = bookService;
 		this.bookDataService = bookDataService;
 		this.userService = userService;
+		this.bookDataURL = bookDataURL;
+		this.apiKey = apiKey;
 	}
 	@GetMapping("search")
 	ModelAndView addBookForm() {
-		IsbnForm isbnForm = new IsbnForm();
-		return new ModelAndView(ADD_VIEW).addObject(isbnForm);
+		String URL = bookDataURL + "key=" + apiKey + "&q=isbn:";
+		return new ModelAndView(ADD_VIEW).addObject("bookUrl", URL);
 	}
 	@GetMapping (value="search", params="isbn")
 	ModelAndView addBook(IsbnForm isbn) {

@@ -2,6 +2,7 @@ package be.joelv.entities;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -45,8 +46,8 @@ public class Publisher implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public List<Book> getBooks() {
-		return new ArrayList<>(books);
+	public Set<Book> getBooks() {
+		return Collections.unmodifiableSet(books);
 	}
 	public void add(Book book) {
 		books.add(book);

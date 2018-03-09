@@ -4,6 +4,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.validation.Validator;
@@ -19,6 +21,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 @EnableWebMvc
 @EnableSpringDataWebSupport
 @ComponentScan
+@PropertySource("classpath:/restClients.properties")
 public class ControllersConfig extends WebMvcConfigurerAdapter {
 	@Bean
 	InternalResourceViewResolver viewResolver() {
@@ -49,6 +52,11 @@ public class ControllersConfig extends WebMvcConfigurerAdapter {
 		LocalValidatorFactoryBean factory = new LocalValidatorFactoryBean();
 		factory.setValidationMessageSource(messageSource());
 		return factory;
+	}
+	@Bean
+	static PropertySourcesPlaceholderConfigurer
+		propertySourcesPlaceholderConfigurer() {
+		return new PropertySourcesPlaceholderConfigurer();
 	}
 	@Override
 	public Validator getValidator() {
