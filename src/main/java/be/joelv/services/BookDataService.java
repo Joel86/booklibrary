@@ -1,8 +1,10 @@
 package be.joelv.services;
 
+import java.util.Optional;
+
 import be.joelv.entities.Book;
 import be.joelv.valueobjects.IsbnForm;
 
 public interface BookDataService {
-	Book getBook(IsbnForm isbn);
+	Optional<Book> getBook(String isbn);
 }

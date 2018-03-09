@@ -1,5 +1,7 @@
 package be.joelv.services;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 import be.joelv.entities.Book;
@@ -13,8 +15,9 @@ class BookDataServiceImpl implements BookDataService {
 		this.restClient = restClient;
 	}
 	@Override
-	public Book getBook(IsbnForm isbn) {
-		return restClient.getBookData(isbn);
+	public Optional<Book> getBook(String isbn) {
+		return Optional.ofNullable(
+				restClient.getBookData(isbn));
 	}
 
 }

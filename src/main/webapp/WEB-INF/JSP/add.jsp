@@ -16,7 +16,7 @@
   <input type='submit' value='Search'>
 </form>
 <div id='bookInfo'>
-  <form>
+  <form method='post' action='<c:url value="/add"/>'>
     <dl>
       <dt><img id='thumb'/></dt>
       <dt>Isbn:</dt>
@@ -36,6 +36,7 @@
       <dt class='description'>Description:</dt>
       <dd id='description'></dd>
     </dl>
+    <input type='hidden' id='inputIsbn' name='inputIsbn'/>
     <input type='submit' value='Add to library'>
   </form>
 </div>
@@ -56,6 +57,8 @@
 	  switch(this.status) {
 	  case 200:
 		  document.getElementById('bookInfo').style.display = 'inline';
+		  document.getElementById('inputIsbn').setAttribute('value', 
+				  document.getElementById('bookIsbn').value);
 		  var bookResource = JSON.parse(this.responseText);
 		  var volumeInfo = bookResource.items[0].volumeInfo;
 		  var industryIdentifiers = volumeInfo.industryIdentifiers;

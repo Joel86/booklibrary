@@ -1,6 +1,7 @@
 package be.joelv.restclients;
 
 import java.net.URI;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,11 +33,10 @@ class RestClientImpl implements RestClient {
 		this.apiKey = apiKey;
 	}
 	@Override
-	public Book getBookData(IsbnForm isbn) {
+	public Book getBookData(String isbn) {
 		try {
-			String param = "isbn:" + isbn.getIsbn();
 			URI targetUrl= UriComponentsBuilder.fromUriString(bookDataURL)
-			    .queryParam("q", param)
+			    .queryParam("q", "isbn=" + isbn)
 			    .queryParam("key", apiKey)
 			    .build()
 			    .encode()

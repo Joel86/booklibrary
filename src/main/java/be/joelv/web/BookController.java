@@ -78,12 +78,12 @@ class BookController {
 		Book book = bookService.read(id).get();
 		return new ModelAndView(BOOK_DETAIL_VIEW).addObject("book", book);
 	}
-	@PostMapping("add")
-	String register(Book book) {
+	@PostMapping(value="add", params="inputIsbn")
+	String register(String inputIsbn) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String username = auth.getName();
 		long userId = userService.read(username).get().getId();
-		registrationService.register(userId, book);
+		registrationService.register(userId, inputIsbn);
 		return REDIRECT_AFTER_ADDING;
 	}
 	@InitBinder("isbnForm")
