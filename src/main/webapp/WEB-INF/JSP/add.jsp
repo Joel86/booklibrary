@@ -13,105 +13,141 @@
 <form id='searchForm'>
   <label>Isbn:
   <input id='bookIsbn' autofocus='autofocus'/></label>
-  <input type='submit' value='Search'>
+  <input type='submit' id='submitButton' value='Search'>
 </form>
 <div id='bookInfo'>
-  <form method='post' action='<c:url value="/add"/>'>
-    <dl>
-      <dt><img id='thumb'/></dt>
-      <dt>Isbn:</dt>
-      <dd id='isbn'></dd>
-      <dt>Title:</dt>
-      <dd id='title'></dd>
-      <dt class='pages'>Pages:</dt>
-      <dd id='pages'></dd>
-      <dt class='year'>Year:</dt>
-      <dd id='year'></dd>
-      <dt>Publisher:</dt>
-      <dd id='publisher'></dd>
-      <dt>Author(s):</dt>
-      <dd id='authors'></dd>
-      <dt>Genre(s):</dt>
-      <dd id='genres'></dd>
-      <dt class='description'>Description:</dt>
-      <dd id='description'></dd>
-    </dl>
-    <input type='hidden' id='inputIsbn' name='inputIsbn'/>
-    <input type='submit' value='Add to library'>
-  </form>
 </div>
+<form id='addBookForm' class='hide' method='post' 
+	action='<c:url value="/add"/>'>
+  <input type='hidden' id='inputIsbn' name='inputIsbn'/>
+  <input type='submit' value='Add to library'>
+</form>
+<span class='error'></span>
 <c:url value='${bookUrl}' var='url'/>
-  <script>
-  document.getElementById('searchForm').onsubmit = searchBook;
-  function searchBook() {
-	  var request = new XMLHttpRequest();
-	  request.open(
-			  "GET", '${url}' + document.getElementById('bookIsbn').value, true);
-	  request.setRequestHeader('accept', 'application/json');
-	  request.onload = response;
-	  request.send();
-	  return false;
-  }
-  
-  function response() {
-	  switch(this.status) {
-	  case 200:
-		  document.getElementById('bookInfo').style.display = 'inline';
-		  document.getElementById('inputIsbn').setAttribute('value', 
-				  document.getElementById('bookIsbn').value);
-		  var bookResource = JSON.parse(this.responseText);
-		  var volumeInfo = bookResource.items[0].volumeInfo;
-		  var industryIdentifiers = volumeInfo.industryIdentifiers;
-		  var thumb = volumeInfo.imageLinks.thumbnail;
-		  var isbn10 = '';
-		  var isbn13 = '';
-		  for(var i=0;i<industryIdentifiers.length;i++) {
-			  if(industryIdentifiers[i].type == 'ISBN_10') {
-				  isbn10 = industryIdentifiers[i].identifier;
-			  } else {
-				  isbn13 = industryIdentifiers[i].identifier;
-			  }
-		  }
-		  var title = volumeInfo.title;
-		  var pages = volumeInfo.pageCount;
-		  var date = volumeInfo.publishedDate;
-		  var publisher = volumeInfo.publisher;
-		  var description = volumeInfo.description;
-		  document.getElementById('thumb').setAttribute('src' , 
-				  volumeInfo.imageLinks.thumbnail);
-		  document.getElementById('isbn').innerHTML = isbn10 + ' (' + isbn13 + ')'; 
-		  document.getElementById('title').innerHTML = volumeInfo.title;
-		  if(pages) {
-			document.getElementsByClassName('pages')[0].style.display = 'block';
-			document.getElementById('pages').innerHTML = pages;
-		  }
-		  if(date) {
-			document.getElementsByClassName('year')[0].style.display = 'block';
-			document.getElementById('year').innerHTML = date.substring(0,4);
-		  }
-		  document.getElementById('publisher').innerHTML = publisher;
-		  var sAuthors = '';
-		  for(var i=0;i<volumeInfo.authors.length;i++) {
-			  sAuthors += volumeInfo.authors[i] + '<br/>';
-		  }
-		  var sGenres = '';
-		  document.getElementById('authors').innerHTML = sAuthors;
-		  for(var i=0;i<volumeInfo.categories.length;i++) {
-			  sGenres += volumeInfo.categories[i] + '<br/>';
-		  }
-		  document.getElementById('genres').innerHTML = sGenres;
-		  if(description) {
-			  document.getElementsByClassName('description')[0].style.display = 'block';
-			  document.getElementById('description').innerHTML = description;
-		  }
-		  break;
-	  case 404:
-		  alert('Book not found');
-		  break;
-	  default:
-		  alert('Technical error');
-	  }
-  }
-  </script>
+	<script>
+		document.getElementById('searchForm').onsubmit = searchBook;
+		function searchBook() {
+			document.getElementById('submitButton').disabled = true;
+			clearList();
+			var request = new XMLHttpRequest();
+			request.open("GET", '${url}'
+					+ document.getElementById('bookIsbn').value, true);
+			request.setRequestHeader('accept', 'application/json');
+			request.onload = response;
+			request.send();
+			return false;
+		}
+
+		function response() {
+			switch (this.status) {
+			case 200:
+				var eDiv = document.getElementById('bookInfo');
+				var eList = document.createElement('dl');
+				eList.setAttribute('id', 'propertyList');
+				document.getElementById('addBookForm').removeAttribute('class');
+				document.getElementById('inputIsbn').setAttribute('value',
+						document.getElementById('bookIsbn').value);
+				var bookResource = JSON.parse(this.responseText);
+				
+				if (bookResource.totalItems != 0) {
+					var volumeInfo = bookResource.items[0].volumeInfo;
+					var industryIdentifiers = volumeInfo.industryIdentifiers;
+					var image = volumeInfo.imageLinks;
+					var isbn10;
+					var isbn13;
+					for (var i = 0; i < industryIdentifiers.length; i++) {
+						if (industryIdentifiers[i].type == 'ISBN_10') {
+							isbn10 = industryIdentifiers[i].identifier;
+						} else {
+							isbn13 = industryIdentifiers[i].identifier;
+						}
+					}
+					var title = volumeInfo.title;
+					var pages = volumeInfo.pageCount;
+					var date = volumeInfo.publishedDate;
+					var publisher = volumeInfo.publisher;
+					var description = volumeInfo.description;
+					
+					if (typeof image != 'undefined') {
+						var eTerm = document.createElement('dt')
+						var eImg = document.createElement('img');
+						eImg.setAttribute('src', image.thumbnail);
+						eTerm.appendChild(eImg);
+						eList.appendChild(eTerm);
+					}
+					var sTerm = document.createTextNode('Isbn:');
+					var eTerm = document.createElement('dt');
+					eTerm.appendChild(sTerm);
+					var eDescription = document.createElement('dd');
+					eDescription.innerHTML = isbn10 + ' ('
+					+ isbn13 + ')';
+					eList.appendChild(eTerm);
+					eList.appendChild(eDescription);
+					createListItem(title, 'Title:', eList);
+					createListItem(pages, 'Pages:', eList);
+					createListItem(date.substring(0,4), 'Year:', eList);
+					createListItem(publisher, 'Publisher:', eList);
+					if (typeof volumeInfo.authors != 'undefined' && 
+							volumeInfo.authors.length != 0) {
+						var eTerm = document.createElement('dt');
+						var sTerm = document.createTextNode('Author(s):');
+						eTerm.appendChild(sTerm);
+						var eDescription = document.createElement('dd');
+						var sDescription = '';
+						for (var i = 0; i < volumeInfo.authors.length; i++) {
+							sDescription += volumeInfo.authors[i] + '<br/>';
+						}
+						eDescription.innerHTML = sDescription;
+						eList.appendChild(eTerm);
+						eList.appendChild(eDescription);
+					}
+					if(typeof volumeInfo.genres != 'undefined' && 
+							volumeInfo.genres.length != 0) {
+						var eTerm = document.createElement('dt');
+						var sTerm = document.createTextNode('Genre(s):');
+						eTerm.appendChild(sTerm);
+						var eDescription = document.createElement('dd');
+						var sDescription = '';
+						for (var i = 0; i < volumeInfo.categories.length; i++) {
+							sDescription += volumeInfo.categories[i] + '<br/>';
+						}
+						sDescription.innerHTML = sDescription;
+						eList.appendChild(eTerm);
+						eList.appendChild(eDescription);
+					}
+					createListItem(description, 'Description:', eList);
+					eDiv.appendChild(eList);
+				} else {
+					document.getElementById('addBookForm').setAttribute('class', 'hide');
+					document.getElementsByClassName('error')[0].innerHTML = 'Book not found';
+				}
+				break;
+			case 404:
+				alert('Book not found');
+				break;
+			default:
+				alert('Technical error');
+			}
+			document.getElementById('submitButton').disabled = false;
+		}	
+		function createListItem(sItem, sName, eList) {
+			if(typeof sItem != 'undefined' && sItem != '') {
+				var sTerm = document.createTextNode(sName);
+				var eTerm = document.createElement('dt');
+				eTerm.appendChild(sTerm);
+				var eDescription = document.createElement('dd');
+				eDescription.innerHTML = sItem;
+				eList.appendChild(eTerm);
+				eList.appendChild(eDescription);
+			}
+		}
+		function clearList() {
+			if(document.getElementById('propertyList')) {
+				var eList = document.getElementById('propertyList');
+				eList.parentNode.removeChild(eList);
+			}
+			document.getElementsByClassName('error')[0].innerHTML = '';
+		}
+	</script>
 </body>
 </html>

@@ -54,18 +54,6 @@ class BookController {
 		String URL = bookDataURL + "key=" + apiKey + "&q=isbn:";
 		return new ModelAndView(ADD_VIEW).addObject("bookUrl", URL);
 	}
-	@GetMapping (value="search", params="isbn")
-	ModelAndView addBook(IsbnForm isbn) {
-		ModelAndView modelAndView = new ModelAndView(ADD_VIEW);
-		try {
-			modelAndView.addObject("book", bookDataService.getBook(isbn));
-		} catch(BookNotFoundException ex) {
-			modelAndView.addObject("error", "Book not found");
-		} catch(CouldntReadBookDataException ex) {
-			modelAndView.addObject("error", "Could not read book data");
-		}
-		return modelAndView;
-	}
 	@GetMapping("mybooks")
 	ModelAndView myBooks(User user, Pageable pageable) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();

@@ -64,9 +64,6 @@ label span:empty, .error:empty {
 	color: white;
 	font-weight: bold;
 }
-#bookInfo {
-	display: none;
-}
-.pages, .year, .description {
+.hide {
 	display: none;
 }
