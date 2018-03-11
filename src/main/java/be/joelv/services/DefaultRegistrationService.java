@@ -63,7 +63,7 @@ class DefaultRegistrationService implements RegistrationService {
 	}
 	@Override
 	@Transactional(readOnly = false, isolation = Isolation.READ_COMMITTED)
-	public void delete(long userid, long bookid) {
+	public void unregister(long userid, long bookid) {
 		//todo
 	}
 }

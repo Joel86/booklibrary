@@ -31,6 +31,8 @@
         </tr>
       </thead>
       <tbody>
+      <c:url value='/books/delete' var='url'/>
+      <form action='${url}'>
         <c:forEach items='${page.content}' var='book'>
           <tr>
             <spring:url value='/books/{id}' var='detailUrl'>
@@ -44,7 +46,12 @@
             </td>
             <td>${book.year}</td>
           </tr>
+          <tr>
+            <input type='checkbox' name='deletebook' value='${book.id}'/>
+          </tr>
         </c:forEach>
+        <input type='submit' value='Delete'/>
+      </form>
       </tbody>
     </table>
     <p class='pagineren'>
