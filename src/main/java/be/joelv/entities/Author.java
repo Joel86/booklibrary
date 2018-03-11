@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.Valid;
 
 import org.hibernate.validator.constraints.Length;
@@ -19,7 +20,8 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
-@Table(name="authors")
+@Table(name="authors", uniqueConstraints=
+	{@UniqueConstraint(columnNames={"name", "surname"})})
 public class Author implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id

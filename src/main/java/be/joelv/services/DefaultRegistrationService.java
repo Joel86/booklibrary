@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import be.joelv.entities.Author;
 import be.joelv.entities.Book;
 import be.joelv.entities.Genre;
-import be.joelv.entities.Publisher;
 import be.joelv.entities.User;
 
 @Service
@@ -19,7 +18,6 @@ class DefaultRegistrationService implements RegistrationService {
 	private final AuthorService authorService;
 	private final GenreService genreService;
 	private final PublisherService publisherService;
-	private final BookDataService bookDataService;
 	DefaultRegistrationService(UserService userService, BookService bookService, AuthorService authorService,
 			GenreService genreService, PublisherService publisherService, BookDataService bookDataService) {
 		this.userService = userService;
@@ -27,53 +25,40 @@ class DefaultRegistrationService implements RegistrationService {
 		this.authorService = authorService;
 		this.genreService = genreService;
 		this.publisherService = publisherService;
-		this.bookDataService = bookDataService;
 	}
 	@Override
 	@Transactional(readOnly = false, isolation = Isolation.READ_COMMITTED)
-	public void register(long userid, String isbn) {
+	public void register(long userid, Book book) {
 		Optional<User> optionalUser = userService.read(userid);
-		if(optionalUser.isPresent()) {		
-			Optional<Book> optionalBook = bookService.findByIsbn(isbn);
-			if(optionalBook.isPresent()) {	
-				Book book = optionalBook.get();
-			} else {
-				optionalBook = bookDataService.getBook(isbn);
-				if(optionalBook.isPresent()) {
-					Book book = optionalBook.get();
-					optionalUser.get().add(book);
-					for(Author author : book.getAuthors()) {
-						Optional<Author> optionalAuthor = authorService.findByNameAndSurname(
-								author.getName(), author.getSurname());
-						if(optionalAuthor.isPresent()) {
-							book.add(optionalAuthor.get());
-						} else {
-							authorService.create(author);
-							book.add(author);
-						}
-					}
-					for(Genre genre : book.getGenres()) {
-						Optional<Genre> optionalGenre = genreService.findByName(genre.getName());
-						if(optionalGenre.isPresent()) {
-							book.add(optionalGenre.get());
-						} else {	
-							genreService.create(genre);
-							book.add(genre);
-						}
-					}
-					Optional<Publisher> optionalPublisher = publisherService.findByName(
-							book.getPublisher().getName());
-					if(optionalPublisher.isPresent()) {
-						book.setPublisher(optionalPublisher.get());
-					} else {
-						Publisher publisher = book.getPublisher();
-						publisherService.create(publisher);
-						book.setPublisher(publisher);
-					}
-					bookService.create(book);
-					optionalUser.get().add(book);
+		if(optionalUser.isPresent()) {
+			Book bookOutput;
+			if(! bookService.findByIsbn(book.getIsbn10()).isPresent()) {
+				bookOutput = new Book(book.getIsbn10(), book.getIsbn13(), book.getTitle(), 
+						book.getPages(), book.getYear(), book.getThumbnailUrl());
+				if(publisherService.findByName(book.getPublisher().getName()).isPresent()) {
+					bookOutput.setPublisher(publisherService.findByName(book.getPublisher().getName()).get());
+				} else {
+					bookOutput.setPublisher(book.getPublisher());
 				}
+				for(Author author:book.getAuthors()) {
+					if(authorService.findByNameAndSurname(author.getName(), author.getSurname()).isPresent()) {
+						bookOutput.add(authorService.findByNameAndSurname(author.getName(), author.getSurname()).get());
+					} else {
+						bookOutput.add(author);
+					}
+				}
+				for(Genre genre:book.getGenres()) {
+					if(genreService.findByName(genre.getName()).isPresent()) {
+						bookOutput.add(genreService.findByName(genre.getName()).get());
+					} else {
+						bookOutput.add(genre);
+					}
+				}
+				bookService.create(bookOutput);
+			} else {
+				bookOutput = bookService.findByIsbn(book.getIsbn10()).get();
 			}
+			optionalUser.get().add(bookOutput);
 		}
 	}
 	@Override

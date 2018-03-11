@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -32,6 +33,7 @@ public class Book implements Serializable {
 	private long id;
 	@SafeHtml
 	@NotBlank
+	@Column(unique=true)
 	private String isbn10;
 	@SafeHtml
 	@NotBlank

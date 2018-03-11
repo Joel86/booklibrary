@@ -17,11 +17,12 @@
 </form>
 <div id='bookInfo'>
 </div>
-<form id='addBookForm' class='hide' method='post' 
-	action='<c:url value="/add"/>'>
+<c:url value='/books/add' var='url'/>
+<form:form id='addBookForm' class='hide' method='post' 
+	action='${url}'>
   <input type='hidden' id='inputIsbn' name='inputIsbn'/>
   <input type='submit' value='Add to library'>
-</form>
+</form:form>
 <span class='error'></span>
 <c:url value='${bookUrl}' var='url'/>
 	<script>

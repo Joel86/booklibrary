@@ -20,10 +20,7 @@ class DefaultAuthorService implements AuthorService {
 	@Override
 	@Transactional(readOnly = false, isolation = Isolation.READ_COMMITTED)
 	public void create(Author author) {
-		if(authorRepository.findByNameAndSurname(
-				author.getName(), author.getSurname()) == null) {
 		authorRepository.save(author);
-		}
 	}
 
 	@Override

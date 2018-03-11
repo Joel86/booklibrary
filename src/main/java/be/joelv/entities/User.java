@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,6 +29,7 @@ public class User {
 	@SafeHtml
 	@NotBlank
 	@Length(min=1, max=20)
+	@Column(unique=true)
 	private String username;
 	@SafeHtml
 	@NotBlank

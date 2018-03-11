@@ -71,7 +71,8 @@ class BookController {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String username = auth.getName();
 		long userId = userService.read(username).get().getId();
-		registrationService.register(userId, inputIsbn);
+		bookDataService.getBook(inputIsbn).ifPresent(book ->
+				registrationService.register(userId, book));
 		return REDIRECT_AFTER_ADDING;
 	}
 	@InitBinder("isbnForm")

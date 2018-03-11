@@ -1,7 +1,6 @@
 package be.joelv.restclients;
 
 import java.net.URI;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,7 +16,6 @@ import be.joelv.entities.Genre;
 import be.joelv.entities.Publisher;
 import be.joelv.exceptions.BookNotFoundException;
 import be.joelv.exceptions.CouldntReadBookDataException;
-import be.joelv.valueobjects.IsbnForm;
 
 @Component
 class RestClientImpl implements RestClient {
@@ -58,19 +56,16 @@ class RestClientImpl implements RestClient {
 			String isbn10 = volumeInfo.industryIdentifiers.get(posIsbn10).identifier;
 			String isbn13 = volumeInfo.industryIdentifiers.get(posIsbn13).identifier;
 			String thumbnailUrl = volumeInfo.imageLinks.smallThumbnail;
+			Publisher publisher = new Publisher(volumeInfo.publisher);
 			Book book = new Book(isbn10, isbn13, title, pages, year, thumbnailUrl);
-			if(volumeInfo.publisher != null) {
-				book.setPublisher(new Publisher(volumeInfo.publisher));
-			}
+			book.setPublisher(publisher);
 			for(String authorStr : volumeInfo.authors) {
 				String firstName = authorStr.substring(0, authorStr.indexOf(" "));
 				String lastName = authorStr.substring(authorStr.indexOf(" ") + 1);
 				book.add(new Author(firstName, lastName));
 			}
-			if(volumeInfo.categories != null) {
-				for(String categoryStr : volumeInfo.categories) {
-					book.add(new Genre(categoryStr));
-				}
+			for(String categoryStr : volumeInfo.categories) {
+				book.add(new Genre(categoryStr));
 			}
 			System.out.println(targetUrl);
 			return book;

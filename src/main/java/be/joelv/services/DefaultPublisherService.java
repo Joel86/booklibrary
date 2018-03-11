@@ -3,6 +3,7 @@ package be.joelv.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,9 +21,7 @@ class DefaultPublisherService implements PublisherService {
 	@Override
 	@Transactional(readOnly = false, isolation = Isolation.READ_COMMITTED)
 	public void create(Publisher publisher) {
-		if(!findByName(publisher.getName()).isPresent()) {
-			publisherRepository.save(publisher);
-		}
+		publisherRepository.save(publisher);
 	}
 
 	@Override
@@ -41,9 +40,7 @@ class DefaultPublisherService implements PublisherService {
 	@Override
 	@Transactional(readOnly = false, isolation = Isolation.READ_COMMITTED)
 	public void delete(Publisher publisher) {
-		if(publisher.getBooks().isEmpty()) {
 			publisherRepository.delete(publisher);
-		}
 	}
 
 	@Override

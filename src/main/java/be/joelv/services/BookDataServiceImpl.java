@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import be.joelv.entities.Book;
 import be.joelv.restclients.RestClient;
-import be.joelv.valueobjects.IsbnForm;
 
 @Service
 class BookDataServiceImpl implements BookDataService {

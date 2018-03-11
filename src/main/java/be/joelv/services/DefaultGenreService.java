@@ -20,9 +20,7 @@ class DefaultGenreService implements GenreService {
 	@Override
 	@Transactional(readOnly = false, isolation = Isolation.READ_COMMITTED)
 	public void create(Genre genre) {
-		if(genreRepository.findByName(genre.getName()) == null) {
-			genreRepository.save(genre);
-		}
+		genreRepository.save(genre);
 	}
 
 	@Override

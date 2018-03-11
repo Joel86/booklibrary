@@ -1,12 +1,11 @@
 package be.joelv.entities;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -24,6 +23,7 @@ public class Publisher implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	@SafeHtml
+	@Column(unique=true)
 	private String name;
 	@OneToMany(mappedBy = "publisher")
 	private Set<Book> books;

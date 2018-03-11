@@ -25,9 +25,7 @@ class DefaultBookService implements BookService {
 	@Override
 	@Transactional(readOnly = false, isolation = Isolation.READ_COMMITTED)
 	public void create(Book book) {
-		if(bookRepository.findByIsbn10(book.getIsbn10()) == null) {
-			bookRepository.save(book);
-		}
+		bookRepository.save(book);
 	}
 
 	@Override
