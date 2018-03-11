@@ -48,7 +48,7 @@
 				document.getElementById('inputIsbn').setAttribute('value',
 						document.getElementById('bookIsbn').value);
 				var bookResource = JSON.parse(this.responseText);
-				
+//===================if book found=======================//		
 				if (bookResource.totalItems != 0) {
 					var volumeInfo = bookResource.items[0].volumeInfo;
 					var industryIdentifiers = volumeInfo.industryIdentifiers;
@@ -67,7 +67,8 @@
 					var date = volumeInfo.publishedDate;
 					var publisher = volumeInfo.publisher;
 					var description = volumeInfo.description;
-					
+		//==============Create list of book properties==============//			
+					//Thumbnail
 					if (typeof image != 'undefined') {
 						var eTerm = document.createElement('dt')
 						var eImg = document.createElement('img');
@@ -75,6 +76,7 @@
 						eTerm.appendChild(eImg);
 						eList.appendChild(eTerm);
 					}
+					//Isbn
 					var sTerm = document.createTextNode('Isbn:');
 					var eTerm = document.createElement('dt');
 					eTerm.appendChild(sTerm);
@@ -83,10 +85,12 @@
 					+ isbn13 + ')';
 					eList.appendChild(eTerm);
 					eList.appendChild(eDescription);
+					//Title, pages, Year, Publisher
 					createListItem(title, 'Title:', eList);
 					createListItem(pages, 'Pages:', eList);
 					createListItem(date.substring(0,4), 'Year:', eList);
 					createListItem(publisher, 'Publisher:', eList);
+					//Author(s)
 					if (typeof volumeInfo.authors != 'undefined' && 
 							volumeInfo.authors.length != 0) {
 						var eTerm = document.createElement('dt');
@@ -101,6 +105,7 @@
 						eList.appendChild(eTerm);
 						eList.appendChild(eDescription);
 					}
+					//Genre(s)
 					if(typeof volumeInfo.genres != 'undefined' && 
 							volumeInfo.genres.length != 0) {
 						var eTerm = document.createElement('dt');
@@ -115,8 +120,11 @@
 						eList.appendChild(eTerm);
 						eList.appendChild(eDescription);
 					}
+					//Description
 					createListItem(description, 'Description:', eList);
+					//Append created list
 					eDiv.appendChild(eList);
+//=====================if book not found======================//
 				} else {
 					document.getElementById('addBookForm').setAttribute('class', 'hide');
 					document.getElementsByClassName('error')[0].innerHTML = 'Book not found';
@@ -130,6 +138,7 @@
 			}
 			document.getElementById('submitButton').disabled = false;
 		}	
+		//Creates list item, appends dt and dd to eList
 		function createListItem(sItem, sName, eList) {
 			if(typeof sItem != 'undefined' && sItem != '') {
 				var sTerm = document.createTextNode(sName);
@@ -141,6 +150,7 @@
 				eList.appendChild(eDescription);
 			}
 		}
+		//Deletes previously created list if present, clears error span
 		function clearList() {
 			if(document.getElementById('propertyList')) {
 				var eList = document.getElementById('propertyList');
