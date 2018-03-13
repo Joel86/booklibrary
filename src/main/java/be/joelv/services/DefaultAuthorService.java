@@ -56,8 +56,7 @@ class DefaultAuthorService implements AuthorService {
 		return 0;
 	}
 	@Override
-	public Optional<Author> findByNameAndSurname(String name, String surname) {
-		return Optional.ofNullable(
-				authorRepository.findByNameAndSurname(name, surname));
+	public Author findByNameAndSurname(String name, String surname) {
+		return authorRepository.findByNameAndSurname(name, surname);
 	}
 }

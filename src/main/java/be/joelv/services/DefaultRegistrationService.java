@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import be.joelv.entities.Author;
 import be.joelv.entities.Book;
 import be.joelv.entities.Genre;
+import be.joelv.entities.Publisher;
 import be.joelv.entities.User;
 
 @Service
@@ -31,34 +32,39 @@ class DefaultRegistrationService implements RegistrationService {
 	public void register(long userid, Book book) {
 		Optional<User> optionalUser = userService.read(userid);
 		if(optionalUser.isPresent()) {
-			Book bookOutput;
-			if(! bookService.findByIsbn(book.getIsbn10()).isPresent()) {
-				bookOutput = new Book(book.getIsbn10(), book.getIsbn13(), book.getTitle(), 
-						book.getPages(), book.getYear(), book.getThumbnailUrl());
-				if(publisherService.findByName(book.getPublisher().getName()).isPresent()) {
-					bookOutput.setPublisher(publisherService.findByName(book.getPublisher().getName()).get());
-				} else {
-					bookOutput.setPublisher(book.getPublisher());
-				}
-				for(Author author:book.getAuthors()) {
-					if(authorService.findByNameAndSurname(author.getName(), author.getSurname()).isPresent()) {
-						bookOutput.add(authorService.findByNameAndSurname(author.getName(), author.getSurname()).get());
-					} else {
-						bookOutput.add(author);
-					}
-				}
-				for(Genre genre:book.getGenres()) {
-					if(genreService.findByName(genre.getName()).isPresent()) {
-						bookOutput.add(genreService.findByName(genre.getName()).get());
-					} else {
-						bookOutput.add(genre);
-					}
-				}
-				bookService.create(bookOutput);
-			} else {
-				bookOutput = bookService.findByIsbn(book.getIsbn10()).get();
+			Book bookOutput = bookService.findByIsbn(book.getIsbn10());
+			if(bookOutput == null) {
+				bookOutput = new Book(book.getIsbn10(), book.getIsbn13(), book.getTitle(), book.getPages(), 
+						book.getYear(), book.getThumbnailUrl());
 			}
-			optionalUser.get().add(bookOutput);
+			
+			Publisher publisher = publisherService.findByName(book.getPublisher().getName());
+			if(publisher == null) {
+				publisher = new Publisher(book.getPublisher().getName());
+			}
+			bookOutput.setPublisher(publisher);
+			
+			book.getAuthors().stream()
+				.forEach(author -> 
+					{Author authorr = authorService.findByNameAndSurname(
+						author.getName(), author.getSurname());
+					if(authorr == null) {
+						authorr = new Author(author.getName(), author.getSurname());
+					}
+					bookOutput.add(authorr);
+					});
+			
+			book.getGenres().stream()
+				.forEach(genre -> 
+					{Genre genree = genreService.findByName(
+						genre.getName());
+					if(genree == null) {
+						genree = new Genre(genre.getName());
+					}
+					bookOutput.add(genree);
+					});
+			
+			bookOutput.add(optionalUser.get());
 		}
 	}
 	@Override

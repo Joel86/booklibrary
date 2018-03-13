@@ -22,6 +22,6 @@ public interface BookService {
 	void addAuthor(long id, Author author);
 	void addGenre(long id, Genre genre);
 	void setPublisher(long id, Publisher publisher);
-	Optional<Book> findByIsbn(String isbn);
+	Book findByIsbn(String isbn);
 	Page<Book> findByUser(String username, Pageable pageable);
 }

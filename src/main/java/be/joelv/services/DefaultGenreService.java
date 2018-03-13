@@ -54,8 +54,7 @@ class DefaultGenreService implements GenreService {
 		return 0;
 	}
 	@Override
-	public Optional<Genre> findByName(String name) {
-		return Optional.ofNullable(
-				genreRepository.findByName(name));
+	public Genre findByName(String name) {
+		return genreRepository.findByName(name);
 	}
 }

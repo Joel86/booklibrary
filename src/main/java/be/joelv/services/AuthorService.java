@@ -12,5 +12,5 @@ public interface AuthorService {
 	void delete(Author author);
 	List<Author> findAll();
 	long countAuthors();
-	Optional<Author> findByNameAndSurname(String name, String surname);
+	Author findByNameAndSurname(String name, String surname);
 }

@@ -64,8 +64,10 @@ class RestClientImpl implements RestClient {
 				String lastName = authorStr.substring(authorStr.indexOf(" ") + 1);
 				book.add(new Author(firstName, lastName));
 			}
-			for(String categoryStr : volumeInfo.categories) {
-				book.add(new Genre(categoryStr));
+			if(volumeInfo.categories != null) {
+				for(String categoryStr : volumeInfo.categories) {
+					book.add(new Genre(categoryStr));
+				}
 			}
 			System.out.println(targetUrl);
 			return book;

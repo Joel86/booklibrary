@@ -12,5 +12,5 @@ public interface PublisherService {
 	void delete(Publisher publisher);
 	List<Publisher> findAll();
 	long countPublishers();
-	Optional<Publisher> findByName(String name);
+	Publisher findByName(String name);
 }

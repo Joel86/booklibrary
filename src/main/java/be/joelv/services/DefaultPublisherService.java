@@ -55,7 +55,7 @@ class DefaultPublisherService implements PublisherService {
 		return 0;
 	}
 	@Override
-	public Optional<Publisher> findByName(String name) {
-		return Optional.ofNullable(publisherRepository.findByName(name));
+	public Publisher findByName(String name) {
+		return publisherRepository.findByName(name);
 	}
 }

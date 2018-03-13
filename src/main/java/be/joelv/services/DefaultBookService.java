@@ -75,9 +75,8 @@ class DefaultBookService implements BookService {
 				book -> book.setPublisher(publisher));
 	}
 	@Override
-	public Optional<Book> findByIsbn(String isbn) {
-		return Optional.ofNullable(
-				bookRepository.findByIsbn10(isbn));
+	public Book findByIsbn(String isbn) {
+		return bookRepository.findByIsbn10(isbn);
 	}
 	@Override
 	public Page<Book> findByUser(String username, Pageable pageable) {

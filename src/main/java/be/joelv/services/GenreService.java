@@ -12,5 +12,5 @@ public interface GenreService {
 	void delete(Genre genre);
 	List<Genre> findAll();
 	long countGenres();
-	Optional<Genre> findByName(String name);
+	Genre findByName(String name);
 }
