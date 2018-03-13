@@ -1,5 +1,7 @@
 package be.joelv.services;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -44,26 +46,25 @@ class DefaultRegistrationService implements RegistrationService {
 			}
 			bookOutput.setPublisher(publisher);
 			
-			book.getAuthors().stream()
-				.forEach(author -> 
-					{Author authorr = authorService.findByNameAndSurname(
-						author.getName(), author.getSurname());
-					if(authorr == null) {
-						authorr = new Author(author.getName(), author.getSurname());
-					}
-					bookOutput.add(authorr);
-					});
+			List<Author> authorsList = new ArrayList<>(book.getAuthors());
+			for(int i=0;i<authorsList.size();i++) {
+				Author author = authorService.findByNameAndSurname(
+					authorsList.get(i).getName(), authorsList.get(i).getSurname());
+				if(author == null) {
+					author = new Author(authorsList.get(i).getName(), authorsList.get(i).getSurname());
+				}
+				bookOutput.add(author);
+			}
 			
-			book.getGenres().stream()
-				.forEach(genre -> 
-					{Genre genree = genreService.findByName(
-						genre.getName());
-					if(genree == null) {
-						genree = new Genre(genre.getName());
-					}
-					bookOutput.add(genree);
-					});
-			
+			List<Genre> genreList = new ArrayList<>(book.getGenres());
+			for(int i=0;i<genreList.size();i++) { 
+				Genre genre = genreService.findByName(
+					genreList.get(i).getName());
+				if(genre == null) {
+					genre = new Genre(genreList.get(i).getName());
+				}
+				bookOutput.add(genre);
+			}
 			bookOutput.add(optionalUser.get());
 		}
 	}
