@@ -32,20 +32,23 @@ class DefaultRegistrationService implements RegistrationService {
 	@Override
 	@Transactional(readOnly = false, isolation = Isolation.READ_COMMITTED)
 	public void register(long userid, Book book) {
+		//Adds book retrieved from rest service to the database if not present yet
+		//Adds book to user with userid
 		Optional<User> optionalUser = userService.read(userid);
 		if(optionalUser.isPresent()) {
+	//Book		
 			Book bookOutput = bookService.findByIsbn(book.getIsbn10());
 			if(bookOutput == null) {
 				bookOutput = new Book(book.getIsbn10(), book.getIsbn13(), book.getTitle(), book.getPages(), 
 						book.getYear(), book.getThumbnailUrl());
 			}
-			
+	//Publisher
 			Publisher publisher = publisherService.findByName(book.getPublisher().getName());
 			if(publisher == null) {
 				publisher = new Publisher(book.getPublisher().getName());
 			}
 			bookOutput.setPublisher(publisher);
-			
+	//Author(s)		
 			List<Author> authorsList = new ArrayList<>(book.getAuthors());
 			for(int i=0;i<authorsList.size();i++) {
 				Author author = authorService.findByNameAndSurname(
@@ -55,7 +58,7 @@ class DefaultRegistrationService implements RegistrationService {
 				}
 				bookOutput.add(author);
 			}
-			
+	//Genre(s)		
 			List<Genre> genreList = new ArrayList<>(book.getGenres());
 			for(int i=0;i<genreList.size();i++) { 
 				Genre genre = genreService.findByName(
@@ -70,7 +73,34 @@ class DefaultRegistrationService implements RegistrationService {
 	}
 	@Override
 	@Transactional(readOnly = false, isolation = Isolation.READ_COMMITTED)
-	public void unregister(long userid, long bookid) {
-		//todo
+	public void unregister(long userid, List<Long> ids) {
+		//Unregisters book from user with userid
+		//Deletes book from database if no users
+		//Deletes publisher, author(s) and genre(s) from database
+		//if no relationships with books table
+		Optional<User> optionalUser = userService.read(userid);
+		if(optionalUser.isPresent()) {
+			for(Long id:ids) {
+				Optional<Book> optionalBook = bookService.read(id);
+				if(optionalBook.isPresent()) {
+					optionalBook.get().remove(optionalUser.get());
+					bookService.delete(optionalBook.get());
+					
+					List<Author> authorsList = new ArrayList<>(optionalBook.get().getAuthors());
+					for(int i=0;i<authorsList.size();i++) {
+						if(authorsList.get(i).getBooks().isEmpty()) {
+							authorService.delete(authorsList.get(i));
+						}
+					}
+					
+					List<Genre> genreList = new ArrayList<>(optionalBook.get().getGenres());
+					for(int i=0;i<genreList.size();i++) {
+						if(genreList.get(i).getBooks().isEmpty()) {
+							genreService.delete(genreList.get(i));
+						}
+					}
+				}
+			}
+		}
 	}
 }

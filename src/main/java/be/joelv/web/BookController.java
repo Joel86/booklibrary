@@ -1,5 +1,8 @@
 package be.joelv.web;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,17 +15,15 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import be.joelv.entities.Book;
 import be.joelv.entities.User;
-import be.joelv.exceptions.BookNotFoundException;
-import be.joelv.exceptions.CouldntReadBookDataException;
 import be.joelv.services.BookDataService;
 import be.joelv.services.BookService;
 import be.joelv.services.RegistrationService;
 import be.joelv.services.UserService;
-import be.joelv.valueobjects.IsbnForm;
 
 @Controller
 @RequestMapping("/books")
@@ -74,6 +75,15 @@ class BookController {
 		bookDataService.getBook(inputIsbn).ifPresent(book ->
 				registrationService.register(userId, book));
 		return REDIRECT_AFTER_ADDING;
+	}
+	@PostMapping("mybooks/delete")
+	public String unregister(@RequestParam List<String> id) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String username = auth.getName();
+		long userId = userService.read(username).get().getId();
+		List<Long> idsLong = id.stream().map(Long::valueOf).collect(Collectors.toList());
+		registrationService.unregister(userId, idsLong);
+	return REDIRECT_AFTER_ADDING;
 	}
 	@InitBinder("isbnForm")
 	void initBinderIsbn(WebDataBinder binder) {

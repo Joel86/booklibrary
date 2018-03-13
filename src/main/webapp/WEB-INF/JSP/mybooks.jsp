@@ -2,6 +2,7 @@
 <%@taglib prefix='c' uri='http://java.sun.com/jsp/jstl/core'%>
 <%@taglib prefix='spring' uri="http://www.springframework.org/tags"%>
 <%@taglib prefix='joelv' uri="http://joelv.be/tags"%>
+<%@taglib prefix='form' uri="http://www.springframework.org/tags/form"%>
 <!doctype html>
 <html lang='en'>
 <head>
@@ -28,11 +29,12 @@
 		 </th>
 		 <th>Author(s)</th>
 		 <th>Year</th>
+		 <th></th>
         </tr>
       </thead>
       <tbody>
-      <c:url value='/books/delete' var='url'/>
-      <form action='${url}'>
+      <c:url value='/books/mybooks/delete' var='url'/>
+      <form:form action='${url}' method='post'>
         <c:forEach items='${page.content}' var='book'>
           <tr>
             <spring:url value='/books/{id}' var='detailUrl'>
@@ -45,13 +47,11 @@
               </c:forEach>
             </td>
             <td>${book.year}</td>
-          </tr>
-          <tr>
-            <input type='checkbox' name='deletebook' value='${book.id}'/>
+            <td><input type='checkbox' name='id' value='${book.id}'/></td>
           </tr>
         </c:forEach>
         <input type='submit' value='Delete'/>
-      </form>
+      </form:form>
       </tbody>
     </table>
     <p class='pagineren'>
