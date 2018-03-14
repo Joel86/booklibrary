@@ -39,9 +39,7 @@ class DefaultAuthorService implements AuthorService {
 	@Override
 	@Transactional(readOnly = false, isolation = Isolation.READ_COMMITTED)
 	public void delete(Author author) {
-		if(author.getBooks().isEmpty()) {
-			authorRepository.delete(author);
-		}
+		authorRepository.delete(author);
 	}
 
 	@Override

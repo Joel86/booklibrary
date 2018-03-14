@@ -13,45 +13,40 @@
   <h1>My Books</h1>
   <c:if test='${not empty page.content}'>
     <table>
-      <thead>
-        <tr>
-          <th><c:url value="" var="url">
-            <c:choose>
-              <c:when test='${param.sort == "title,desc"}'>
-                <c:param name="sort" value="title,asc"/>
-              </c:when>
-              <c:otherwise>
-                <c:param name="sort" value="title,desc"/>
-              </c:otherwise>
-            </c:choose>
-          </c:url>
-          <a href='${url}'>Title</a>
-		 </th>
-		 <th>Author(s)</th>
-		 <th>Year</th>
-		 <th></th>
-        </tr>
-      </thead>
-      <tbody>
       <c:url value='/books/mybooks/delete' var='url'/>
-      <form:form action='${url}' method='post'>
-        <c:forEach items='${page.content}' var='book'>
+        <thead>
           <tr>
-            <spring:url value='/books/{id}' var='detailUrl'>
-              <spring:param name='id' value='${book.id}'/>
-            </spring:url>
-            <td><a href='${detailUrl}'>${book.title}</a></td>
-            <td>
-              <c:forEach items='${book.authors}' var='author'>
-                ${author}, 
-              </c:forEach>
-            </td>
-            <td>${book.year}</td>
-            <td><input type='checkbox' name='id' value='${book.id}'/></td>
+            <th><c:url value="" var="url">
+              <c:choose>
+                <c:when test='${param.sort == "title,desc"}'>
+                  <c:param name="sort" value="title,asc"/>
+                </c:when>
+                <c:otherwise>
+                  <c:param name="sort" value="title,desc"/>
+                </c:otherwise>
+              </c:choose>
+            </c:url>
+            <a href='${url}'>Title</a>
+		   </th>
+		   <th>Author(s)</th>
+	   	   <th>Year</th>
           </tr>
-        </c:forEach>
-        <input type='submit' value='Delete'/>
-      </form:form>
+        </thead>
+        <tbody>
+          <c:forEach items='${page.content}' var='book'>
+            <tr>
+              <spring:url value='/books/{id}' var='detailUrl'>
+                <spring:param name='id' value='${book.id}'/>
+              </spring:url>
+              <td><a href='${detailUrl}'>${book.title}</a></td>
+              <td>
+                <c:forEach items='${book.authors}' var='author'>
+                  ${author}, 
+                </c:forEach>
+              </td>
+              <td>${book.year}</td>
+            </tr>
+          </c:forEach>
       </tbody>
     </table>
     <p class='pagineren'>

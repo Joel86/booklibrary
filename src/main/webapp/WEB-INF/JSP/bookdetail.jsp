@@ -1,6 +1,8 @@
 <%@page contentType='text/html' pageEncoding='UTF-8' session='false'%>
 <%@taglib prefix='c' uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix='joelv' uri="http://joelv.be/tags"%>
+<%@taglib prefix='spring' uri="http://www.springframework.org/tags"%>
+<%@taglib prefix='form' uri="http://www.springframework.org/tags/form"%>
 <!doctype html>
 <html lang='en'>
 <head>
@@ -24,5 +26,11 @@
     <dd>${genre.name}</dd>
   </c:forEach>
 </dl>
+<spring:url value='mybooks/{id}/delete' var='deleteUrl'>
+  <spring:param name='id' value='${book.id}'/>
+</spring:url>
+<form:form method='post' action='${deleteUrl}'>
+  <input type='submit' value='Delete'>
+</form:form>
 </body>
 </html>

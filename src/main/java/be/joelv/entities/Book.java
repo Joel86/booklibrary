@@ -16,6 +16,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -25,6 +28,14 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
+@NamedEntityGraphs({
+	@NamedEntityGraph(name="Book.withAuthors", 
+		attributeNodes=@NamedAttributeNode("authors")),
+	@NamedEntityGraph(name="Book.withPublisher", 
+		attributeNodes=@NamedAttributeNode("publisher")),
+	@NamedEntityGraph(name="Book.withGenres", 
+		attributeNodes=@NamedAttributeNode("genres"))
+})
 @Table(name = "books")
 public class Book implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -65,8 +76,11 @@ public class Book implements Serializable {
 		inverseJoinColumns = @JoinColumn(name = "genreId"))
 	@Valid
 	private Set<Genre> genres = new LinkedHashSet<>();
-	@ManyToMany(mappedBy = "books", 
-			cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+	@ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+	@JoinTable(
+		name = "user_books", 
+		joinColumns = @JoinColumn(name = "bookId"), 
+		inverseJoinColumns = @JoinColumn(name = "userId"))
 	@Valid
 	private Set<User> users = new LinkedHashSet<>();
 	public Book() {}

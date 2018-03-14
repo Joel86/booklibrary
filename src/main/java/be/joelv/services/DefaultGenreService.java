@@ -39,9 +39,7 @@ class DefaultGenreService implements GenreService {
 	@Override
 	@Transactional(readOnly = false, isolation = Isolation.READ_COMMITTED)
 	public void delete(Genre genre) {
-		if(genre.getBooks().isEmpty()) {
-			genreRepository.delete(genre);
-		}
+		genreRepository.delete(genre);
 	}
 	@Override
 	public List<Genre> findAll() {

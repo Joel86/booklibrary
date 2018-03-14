@@ -31,7 +31,7 @@ class BookController {
 	private static final String ADD_VIEW = "add";
 	private static final String MY_BOOKS_VIEW = "mybooks";
 	private static final String BOOK_DETAIL_VIEW = "bookdetail";
-	private static final String REDIRECT_AFTER_ADDING = 
+	private static final String REDIRECT_TO_MYBOOKS = 
 			"redirect:/books/mybooks";
 	private final RegistrationService registrationService;
 	private final BookService bookService;
@@ -74,16 +74,15 @@ class BookController {
 		long userId = userService.read(username).get().getId();
 		bookDataService.getBook(inputIsbn).ifPresent(book ->
 				registrationService.register(userId, book));
-		return REDIRECT_AFTER_ADDING;
+		return REDIRECT_TO_MYBOOKS;
 	}
-	@PostMapping("mybooks/delete")
-	public String unregister(@RequestParam List<String> id) {
+	@PostMapping("mybooks/{id}/delete")
+	public String unregister(@PathVariable long id) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String username = auth.getName();
 		long userId = userService.read(username).get().getId();
-		List<Long> idsLong = id.stream().map(Long::valueOf).collect(Collectors.toList());
-		registrationService.unregister(userId, idsLong);
-	return REDIRECT_AFTER_ADDING;
+		registrationService.unregister(userId, id);
+	return REDIRECT_TO_MYBOOKS;
 	}
 	@InitBinder("isbnForm")
 	void initBinderIsbn(WebDataBinder binder) {

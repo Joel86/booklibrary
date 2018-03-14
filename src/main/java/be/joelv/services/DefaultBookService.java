@@ -44,9 +44,7 @@ class DefaultBookService implements BookService {
 	@Override
 	@Transactional(readOnly = false, isolation = Isolation.READ_COMMITTED)
 	public void delete(Book book) {
-		if(book.getUsers().isEmpty()) {
-			bookRepository.delete(book);
-		}
+		bookRepository.delete(book);
 	}
 
 	@Override

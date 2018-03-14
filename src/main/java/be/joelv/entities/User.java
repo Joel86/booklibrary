@@ -35,11 +35,8 @@ public class User {
 	@NotBlank
 	@Length(min=6, max=20)
 	private String password;
-	@ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-	@JoinTable(
-		name = "user_books",
-		joinColumns = @JoinColumn(name = "userId"),
-		inverseJoinColumns = @JoinColumn(name = "bookId"))
+	@ManyToMany(mappedBy = "users", 
+			cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	@Valid
 	private Set<Book> books = new LinkedHashSet<>();
 	public User() {}
