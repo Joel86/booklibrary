@@ -1,8 +1,6 @@
 package be.joelv.web;
 
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import be.joelv.entities.Book;
@@ -25,7 +22,6 @@ import be.joelv.services.BookDataService;
 import be.joelv.services.BookService;
 import be.joelv.services.RegistrationService;
 import be.joelv.services.UserService;
-import be.joelv.valueobjects.BookYears;
 
 @Controller
 @RequestMapping(path="/books", produces=MediaType.TEXT_HTML_VALUE)

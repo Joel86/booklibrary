@@ -20,7 +20,7 @@ class DropdownListRestController {
 		this.bookService = bookService;
 	}
 	@GetMapping("years")
-	public BookYears getBookYears(User user) {
+	public BookYears getBookYearsByUser() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String username = auth.getName();
 		List<Integer> years = bookService.findDistinctYearsByUser(username);

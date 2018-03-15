@@ -12,6 +12,14 @@
 	<joelv:menu />
 	<h1>My Books</h1>
 	<h5>Filter by:</h5>
+	<form action='' method='get' id='yearForm'>
+	  <select id='yearFilterSelectBox' name='year' onchange='yearForm.submit()'>
+	    <option value=''>Year</option>
+	  </select>
+	</form>
+	<form action='' method='get'>
+	  <input type='submit' value='Reset Filters'>
+	</form>
 	<c:if test='${not empty page.content}'>
 		<table>
 			<thead>
@@ -62,5 +70,49 @@
 			</c:forEach>
 		</p>
 	</c:if>
+	<script>
+	  var eSelectBox = document.getElementById('yearFilterSelectBox');
+	  onetime(eSelectBox, 'focus', handler);
+	  
+	  //function to ensure eventlistener fires only once
+	  function onetime(node, type, callback){
+		 //create event
+		 node.addEventListener(type, function(e) {
+			 e.target.removeEventListener(e.type, arguments.callee);
+			 return callback(e);
+		 });
+	  }
+	  //handler function
+	  function handler(e) {
+	    getConnection('/booklibrary/books/mybooks/years')
+	  }
+	  
+	  function getConnection(url) {
+		  var request = new XMLHttpRequest();
+		  request.open("GET", url, true);
+		  request.setRequestHeader('accept', 'application/json');
+		  request.onload = fillSelectBox;
+		  request.send();
+		  return false;
+	  }
+	  
+	  function fillSelectBox() {
+		  switch(this.status) {
+		  case 200:
+			  var resource = JSON.parse(this.responseText);
+			  var selectBox = document.getElementById('yearFilterSelectBox');
+			  for(var i=0;i<resource.years.length;i++) {
+			    var sYear = resource.years[i];
+				var eOption = document.createElement('option');
+			    eOption.value = sYear;
+			    eOption.innerHTML = sYear;
+			    selectBox.appendChild(eOption);
+			  }
+			  break;
+		  default:
+			  alert('technical problem');
+		  }
+	  }
+	</script>
 </body>
 </html>

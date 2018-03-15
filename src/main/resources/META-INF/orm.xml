@@ -6,7 +6,7 @@
 	version="2.1">
 	<named-query name='Book.findDistinctYearsByUser'>
 		<query>select distinct b.year from Book b join 
-			User u where u.username = :username order by b.year
+			b.users u where u.username = :username order by b.year
 		</query>
 	</named-query>
 </entity-mappings>
