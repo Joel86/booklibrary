@@ -89,4 +89,8 @@ class DefaultBookService implements BookService {
 	public List<Integer> findDistinctYearsByUser(String username) {
 		return bookRepository.findDistinctYearsByUser(username);
 	}
+	@Override
+	public List<String> findDistinctFirstCharByUser(String username) {
+		return bookRepository.findDistinctFirstCharByUser(username);
+	}
 }

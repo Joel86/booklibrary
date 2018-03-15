@@ -14,4 +14,5 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 	Page<Book> findByUsers_Username(String username, Pageable pageable);
 	Page<Book> findByYearAndUsers_Username(int year, String username, Pageable pageable);
 	List<Integer> findDistinctYearsByUser(@Param("username") String username);
+	List<String>findDistinctFirstCharByUser(@Param("username") String username);
 }

@@ -27,4 +27,5 @@ public interface BookService {
 	Page<Book> findByYearAndUser(int year, String username, 
 			Pageable pageable);
 	List<Integer> findDistinctYearsByUser(String username);
+	List<String> findDistinctFirstCharByUser(String username);
 }

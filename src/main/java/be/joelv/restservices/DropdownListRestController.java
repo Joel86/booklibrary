@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import be.joelv.entities.User;
 import be.joelv.services.BookService;
+import be.joelv.valueobjects.BookStartingChars;
 import be.joelv.valueobjects.BookYears;
 
 @RestController
@@ -25,5 +25,12 @@ class DropdownListRestController {
 		String username = auth.getName();
 		List<Integer> years = bookService.findDistinctYearsByUser(username);
 		return new BookYears(years);
+	}
+	@GetMapping("startingChars")
+	public BookStartingChars getBookStartingCharsByUser() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String username = auth.getName();
+		List<String> chars = bookService.findDistinctFirstCharByUser(username);
+		return new BookStartingChars(chars);
 	}
 }

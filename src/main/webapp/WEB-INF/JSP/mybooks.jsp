@@ -12,9 +12,14 @@
 	<joelv:menu />
 	<h1>My Books</h1>
 	<h5>Filter by:</h5>
-	<form action='' method='get' id='yearForm'>
-	  <select id='yearFilterSelectBox' name='year' onchange='yearForm.submit()'>
+	<form action='' method='get' id='yearFilterForm'>
+	  <select id='yearFilterSelectBox' name='year' onchange='yearFilterForm.submit()'>
 	    <option value=''>Year</option>
+	  </select>
+	</form>
+	<form action='' method='get' id='titleFilterForm'>
+	  <select id='titleFilterSelectBox' name='title' onchange='titleFilterForm.submit()'>
+	    <option value=''>Title</option>
 	  </select>
 	</form>
 	<form action='' method='get'>
@@ -91,23 +96,24 @@
 		  var request = new XMLHttpRequest();
 		  request.open("GET", url, true);
 		  request.setRequestHeader('accept', 'application/json');
-		  request.onload = fillSelectBox;
+		  request.onload = response;
 		  request.send();
 		  return false;
 	  }
 	  
-	  function fillSelectBox() {
+	  function response() {
 		  switch(this.status) {
 		  case 200:
 			  var resource = JSON.parse(this.responseText);
-			  var selectBox = document.getElementById('yearFilterSelectBox');
-			  for(var i=0;i<resource.years.length;i++) {
-			    var sYear = resource.years[i];
-				var eOption = document.createElement('option');
-			    eOption.value = sYear;
-			    eOption.innerHTML = sYear;
-			    selectBox.appendChild(eOption);
-			  }
+			  var eSelectBox = document.getElementById('yearFilterSelectBox');
+			  var resourcePath = resource.years;
+			  for(var i=0;i<resourcePath.length;i++) {
+				    var sYear = resourcePath[i];
+					var eOption = document.createElement('option');
+				    eOption.value = sYear;
+				    eOption.innerHTML = sYear;
+				    eSelectBox.appendChild(eOption);
+				  }
 			  break;
 		  default:
 			  alert('technical problem');
