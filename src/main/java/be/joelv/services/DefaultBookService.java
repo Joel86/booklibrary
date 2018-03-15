@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,7 +50,7 @@ class DefaultBookService implements BookService {
 
 	@Override
 	public List<Book> findAll() {
-		return bookRepository.findAll();
+		return bookRepository.findAll(new Sort("title"));
 	}
 
 	@Override
@@ -79,5 +80,13 @@ class DefaultBookService implements BookService {
 	@Override
 	public Page<Book> findByUser(String username, Pageable pageable) {
 		return bookRepository.findByUsers_Username(username, pageable);
+	}
+	@Override
+	public Page<Book> findByYearAndUser(int year, String username, Pageable pageable) {
+		return bookRepository.findByYearAndUsers_Username(year, username, pageable);
+	}
+	@Override
+	public List<Integer> findDistinctYearsByUser(String username) {
+		return bookRepository.findDistinctYearsByUser(username);
 	}
 }

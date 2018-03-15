@@ -1,11 +1,12 @@
 package be.joelv.web;
 
+
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import be.joelv.entities.Book;
@@ -24,9 +25,10 @@ import be.joelv.services.BookDataService;
 import be.joelv.services.BookService;
 import be.joelv.services.RegistrationService;
 import be.joelv.services.UserService;
+import be.joelv.valueobjects.BookYears;
 
 @Controller
-@RequestMapping("/books")
+@RequestMapping(path="/books", produces=MediaType.TEXT_HTML_VALUE)
 class BookController {
 	private static final String ADD_VIEW = "add";
 	private static final String MY_BOOKS_VIEW = "mybooks";
@@ -60,6 +62,13 @@ class BookController {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String username = auth.getName();
 		Page<Book> page = bookService.findByUser(username, pageable);
+		return new ModelAndView(MY_BOOKS_VIEW).addObject("page", page);
+	}
+	@GetMapping(value="mybooks", params="year")
+	ModelAndView myBooksFiltered(int year, User user, Pageable pageable) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String username = auth.getName();
+		Page<Book> page = bookService.findByYearAndUser(year, username, pageable);
 		return new ModelAndView(MY_BOOKS_VIEW).addObject("page", page);
 	}
 	@GetMapping("{id}")

@@ -29,7 +29,8 @@
 <spring:url value='mybooks/{id}/delete' var='deleteUrl'>
   <spring:param name='id' value='${book.id}'/>
 </spring:url>
-<form:form method='post' action='${deleteUrl}'>
+<form:form method='post' action='${deleteUrl}'
+   onsubmit="return confirm('Are you sure?')">
   <input type='submit' value='Delete'>
 </form:form>
 </body>

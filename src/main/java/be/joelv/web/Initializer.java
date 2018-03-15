@@ -8,6 +8,7 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 import be.joelv.datasource.DataSourceConfig;
 import be.joelv.repositories.RepositoriesConfig;
 import be.joelv.restclients.RestClientsConfig;
+import be.joelv.restservices.RestControllersConfig;
 import be.joelv.security.SecurityConfig;
 import be.joelv.services.ServicesConfig;
 
@@ -24,7 +25,7 @@ public class Initializer
 	}
 	@Override
 	protected Class<?>[] getServletConfigClasses() {
-		return new Class<?>[] {ControllersConfig.class};
+		return new Class<?>[] {ControllersConfig.class, RestControllersConfig.class};
 	}
 	@Override
 	protected Filter[] getServletFilters() {

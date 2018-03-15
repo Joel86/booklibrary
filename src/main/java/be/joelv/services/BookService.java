@@ -24,4 +24,7 @@ public interface BookService {
 	void setPublisher(long id, Publisher publisher);
 	Book findByIsbn(String isbn);
 	Page<Book> findByUser(String username, Pageable pageable);
+	Page<Book> findByYearAndUser(int year, String username, 
+			Pageable pageable);
+	List<Integer> findDistinctYearsByUser(String username);
 }
