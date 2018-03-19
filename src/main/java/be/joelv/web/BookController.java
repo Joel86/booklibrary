@@ -55,15 +55,13 @@ class BookController {
 	}
 	@GetMapping("mybooks")
 	ModelAndView myBooks(User user, Pageable pageable) {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String username = auth.getName();
+		String username = getUsername();
 		Page<Book> page = bookService.findByUser(username, pageable);
 		return new ModelAndView(MY_BOOKS_VIEW).addObject("page", page);
 	}
 	@GetMapping(value="mybooks", params="year")
 	ModelAndView myBooksFiltered(int year, User user, Pageable pageable) {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String username = auth.getName();
+		String username = getUsername();
 		Page<Book> page = bookService.findByYearAndUser(year, username, pageable);
 		return new ModelAndView(MY_BOOKS_VIEW).addObject("page", page);
 	}
@@ -74,8 +72,7 @@ class BookController {
 	}
 	@PostMapping(value="add", params="inputIsbn")
 	String register(String inputIsbn) {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String username = auth.getName();
+		String username = getUsername();
 		long userId = userService.read(username).get().getId();
 		bookDataService.getBook(inputIsbn).ifPresent(book ->
 				registrationService.register(userId, book));
@@ -83,8 +80,7 @@ class BookController {
 	}
 	@PostMapping("mybooks/{id}/delete")
 	public String unregister(@PathVariable long id) {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String username = auth.getName();
+		String username = getUsername();
 		long userId = userService.read(username).get().getId();
 		registrationService.unregister(userId, id);
 	return REDIRECT_TO_MYBOOKS;
@@ -96,5 +92,9 @@ class BookController {
 	@InitBinder("book")
 	void initBinderBook(WebDataBinder binder) {
 	 binder.initDirectFieldAccess();
+	}
+	private String getUsername() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		return auth.getName();
 	}
 }

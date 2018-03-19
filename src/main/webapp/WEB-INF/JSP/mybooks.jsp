@@ -29,16 +29,21 @@
 		<table>
 			<thead>
 				<tr>
-					<th><c:url value="" var="url">
+					<th><spring:url value="" var="url">
+							<c:forEach items='${param}' var='p'>
+								<c:if test='${p.key != "sort"}'>
+								  <spring:param name='${p.key}' value='${p.value}'/>
+								</c:if>
+							</c:forEach>
 							<c:choose>
-								<c:when test='${param.sort == "title,desc"}'>
-									<c:param name="sort" value="title,asc" />
+								<c:when test='${param.sort == "title,asc"}'>
+									<spring:param name="sort" value="title,desc" />
 								</c:when>
 								<c:otherwise>
-									<c:param name="sort" value="title,desc" />
+									<spring:param name="sort" value="title,asc" />
 								</c:otherwise>
 							</c:choose>
-						</c:url> <a href='${url}'>Title</a></th>
+						</spring:url> <a href='${url}'>Title</a></th>
 					<th>Author(s)</th>
 					<th>Year</th>
 				</tr>
@@ -76,8 +81,8 @@
 		</p>
 	</c:if>
 	<script>
-	  var eSelectBox = document.getElementById('yearFilterSelectBox');
-	  onetime(eSelectBox, 'focus', handler);
+	  var eYearFilterSelectBox = document.getElementById('yearFilterSelectBox');
+	  onetime(eYearFilterSelectBox, 'focus', handler);
 	  
 	  //function to ensure eventlistener fires only once
 	  function onetime(node, type, callback){
@@ -89,35 +94,32 @@
 	  }
 	  //handler function
 	  function handler(e) {
-	    getConnection('/booklibrary/books/mybooks/years')
+	    getConnection('/booklibrary/books/mybooks/years');
 	  }
 	  
 	  function getConnection(url) {
 		  var request = new XMLHttpRequest();
 		  request.open("GET", url, true);
 		  request.setRequestHeader('accept', 'application/json');
-		  request.onload = response;
+		  request.onload = function(){
+			  switch(this.status) {
+			  case 200:
+				  var resource = JSON.parse(this.responseText);
+				  var resourcePath = resource.years;
+				  for(var i=0;i<resourcePath.length;i++) {
+					    var sYear = resourcePath[i];
+						var eOption = document.createElement('option');
+					    eOption.value = sYear;
+					    eOption.innerHTML = sYear;
+					    eYearFilterSelectBox.appendChild(eOption);
+					  }
+				  break;
+			  default:
+				  alert('technical problem');
+			  }
+		  }
 		  request.send();
 		  return false;
-	  }
-	  
-	  function response() {
-		  switch(this.status) {
-		  case 200:
-			  var resource = JSON.parse(this.responseText);
-			  var eSelectBox = document.getElementById('yearFilterSelectBox');
-			  var resourcePath = resource.years;
-			  for(var i=0;i<resourcePath.length;i++) {
-				    var sYear = resourcePath[i];
-					var eOption = document.createElement('option');
-				    eOption.value = sYear;
-				    eOption.innerHTML = sYear;
-				    eSelectBox.appendChild(eOption);
-				  }
-			  break;
-		  default:
-			  alert('technical problem');
-		  }
 	  }
 	</script>
 </body>
