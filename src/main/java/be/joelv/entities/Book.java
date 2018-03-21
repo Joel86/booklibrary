@@ -2,6 +2,7 @@ package be.joelv.entities;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -19,6 +20,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.NamedEntityGraphs;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -76,13 +78,11 @@ public class Book implements Serializable {
 		inverseJoinColumns = @JoinColumn(name = "genreId"))
 	@Valid
 	private Set<Genre> genres = new LinkedHashSet<>();
-	@ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-	@JoinTable(
-		name = "user_books", 
-		joinColumns = @JoinColumn(name = "bookId"), 
-		inverseJoinColumns = @JoinColumn(name = "userId"))
-	@Valid
-	private Set<User> users = new LinkedHashSet<>();
+	@OneToMany(
+			mappedBy = "book", 
+			cascade = CascadeType.ALL, 
+			orphanRemoval = true)
+	private Set<UserBook> users = new LinkedHashSet<>();
 	public Book() {}
 	public Book(String isbn10, String isbn13, String title, 
 			int pages, int year, String thumbnailUrl) {
@@ -175,18 +175,26 @@ public class Book implements Serializable {
 		return Collections.unmodifiableSet(genres);
 	}
 	public void add(User user) {
-		users.add(user);
-		if(!user.getBooks().contains(this)) {
+		UserBook userBook = new UserBook(this, user, false);
+		users.add(userBook);
+		if(!user.getBooks().contains(userBook)) {
 			user.add(this);
 		}
 	}
 	public void remove(User user) {
-		users.remove(user);
-		if(user.getBooks().contains(this)) {
-			user.remove(this);
+		for(Iterator<UserBook> iterator = users.iterator();
+				iterator.hasNext(); ) {
+			UserBook userBook = iterator.next();
+			if(userBook.getBook().equals(this) && 
+					userBook.getUser().equals(user)) {
+				iterator.remove();
+				userBook.getUser().getBooks().remove(userBook);
+				userBook.setBook(null);
+				userBook.setUser(null);
+			}
 		}
 	}
-	public Set<User> getUsers() {
+	public Set<UserBook> getUsers() {
 		return Collections.unmodifiableSet(users);
 	}
 	public String getThumbnailUrl() {

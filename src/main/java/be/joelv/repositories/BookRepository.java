@@ -11,8 +11,8 @@ import be.joelv.entities.Book;
 
 public interface BookRepository extends JpaRepository<Book, Long> {
 	Book findByIsbn10(String isbn);
-	Page<Book> findByUsers_Username(String username, Pageable pageable);
-	Page<Book> findByYearAndUsers_Username(int year, String username, Pageable pageable);
-	List<Integer> findDistinctYearsByUser(@Param("username") String username);
-	List<String>findDistinctFirstCharByUser(@Param("username") String username);
+	Page<Book> findByUserId(@Param("id") long userId, Pageable pageable);
+	Page<Book> findByYearAndUsers_UserId(int year, long userId, Pageable pageable);
+	List<Integer> findDistinctYearsByUser(@Param("id") long userId);
+	List<String>findDistinctFirstCharByUser(@Param("id") long userId);
 }

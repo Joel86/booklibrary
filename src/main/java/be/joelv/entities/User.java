@@ -1,6 +1,8 @@
 package be.joelv.entities;
 
+import java.io.Serializable;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -11,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.Valid;
 
@@ -20,7 +23,8 @@ import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements Serializable {
+	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;
@@ -33,10 +37,11 @@ public class User {
 	@NotBlank
 	@Length(min=6, max=20)
 	private String password;
-	@ManyToMany(mappedBy = "users", 
-			cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-	@Valid
-	private Set<Book> books = new LinkedHashSet<>();
+	@OneToMany(
+			mappedBy = "user", 
+			cascade = CascadeType.ALL,
+			orphanRemoval  = true)
+	private Set<UserBook> books = new LinkedHashSet<>();
 	public User() {}
 	public User(long id, String username, String password) {
 		this.id = id;
@@ -63,18 +68,26 @@ public class User {
 		this.password = password;
 	}
 	public void add(Book book) {
-		books.add(book);
-		if(!book.getUsers().contains(this)) {
+		UserBook userBook = new UserBook(book, this, false);
+		books.add(userBook);
+		if(!book.getUsers().contains(userBook)) {
 			book.add(this);
 		}
 	}
 	public void remove(Book book) {
-		books.remove(book);
-		if(book.getUsers().contains(this)) {
-			book.remove(this);
+		for(Iterator<UserBook> iterator = books.iterator();
+				iterator.hasNext(); ) {
+			UserBook userBook = iterator.next();
+			if(userBook.getUser().equals(this) && 
+					userBook.getBook().equals(book)) {
+				iterator.remove();
+				userBook.getBook().getUsers().remove(userBook);
+				userBook.setBook(null);
+				userBook.setUser(null);
+			}
 		}
 	}
-	public Set<Book> getBooks() {
+	public Set<UserBook> getBooks() {
 		return Collections.unmodifiableSet(books);
 	}
 	@Override

@@ -19,13 +19,10 @@ public interface BookService {
 	void delete(Book book);
 	List<Book> findAll();
 	long countBooks();
-	void addAuthor(long id, Author author);
-	void addGenre(long id, Genre genre);
-	void setPublisher(long id, Publisher publisher);
 	Book findByIsbn(String isbn);
-	Page<Book> findByUser(String username, Pageable pageable);
-	Page<Book> findByYearAndUser(int year, String username, 
+	Page<Book> findByUser(long userId, Pageable pageable);
+	Page<Book> findByYearAndUser(int year, long userId, 
 			Pageable pageable);
-	List<Integer> findDistinctYearsByUser(String username);
-	List<String> findDistinctFirstCharByUser(String username);
+	List<Integer> findDistinctYearsByUser(long userId);
+	List<String> findDistinctFirstCharByUser(long userId);
 }

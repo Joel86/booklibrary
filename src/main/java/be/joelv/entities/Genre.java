@@ -1,5 +1,6 @@
 package be.joelv.entities;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -19,7 +20,8 @@ import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "genres")
-public class Genre {
+public class Genre implements Serializable {
+	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;

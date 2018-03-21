@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<Context path='/booklibrary'>
-	<Resource name='jdbc/booklibrary'
+<Context path='/booklib'>
+	<Resource name='jdbc/booklib'
 			  type='javax.sql.DataSource'
 			  driverClassName='com.mysql.jdbc.Driver' 
-			  url='jdbc:mysql://localhost/booklibrary?useSSL=false'
+			  url='jdbc:mysql://localhost/booklib?useSSL=false'
 			  username='cursist' 
 			  password='cursist' 
 			  closeMethod='close' />

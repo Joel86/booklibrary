@@ -1,6 +1,8 @@
 package be.joelv.web;
 
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -55,14 +57,14 @@ class BookController {
 	}
 	@GetMapping("mybooks")
 	ModelAndView myBooks(User user, Pageable pageable) {
-		String username = getUsername();
-		Page<Book> page = bookService.findByUser(username, pageable);
+		long userId = getUserId();
+		Page<Book> page = bookService.findByUser(userId, pageable);
 		return new ModelAndView(MY_BOOKS_VIEW).addObject("page", page);
 	}
 	@GetMapping(value="mybooks", params="year")
 	ModelAndView myBooksFiltered(int year, User user, Pageable pageable) {
-		String username = getUsername();
-		Page<Book> page = bookService.findByYearAndUser(year, username, pageable);
+		long userId = getUserId();
+		Page<Book> page = bookService.findByYearAndUser(year, userId, pageable);
 		return new ModelAndView(MY_BOOKS_VIEW).addObject("page", page);
 	}
 	@GetMapping("{id}")
@@ -72,16 +74,14 @@ class BookController {
 	}
 	@PostMapping(value="add", params="inputIsbn")
 	String register(String inputIsbn) {
-		String username = getUsername();
-		long userId = userService.read(username).get().getId();
+		long userId = getUserId();
 		bookDataService.getBook(inputIsbn).ifPresent(book ->
 				registrationService.register(userId, book));
 		return REDIRECT_TO_MYBOOKS;
 	}
 	@PostMapping("mybooks/{id}/delete")
 	public String unregister(@PathVariable long id) {
-		String username = getUsername();
-		long userId = userService.read(username).get().getId();
+		long userId = getUserId();
 		registrationService.unregister(userId, id);
 	return REDIRECT_TO_MYBOOKS;
 	}
@@ -93,8 +93,9 @@ class BookController {
 	void initBinderBook(WebDataBinder binder) {
 	 binder.initDirectFieldAccess();
 	}
-	private String getUsername() {
+	private long getUserId() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		return auth.getName();
+		String username = auth.getName();
+		return userService.read(username).get().getId();
 	}
 }

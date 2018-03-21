@@ -10,10 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import be.joelv.entities.Author;
 import be.joelv.entities.Book;
-import be.joelv.entities.Genre;
-import be.joelv.entities.Publisher;
 import be.joelv.repositories.BookRepository;
 
 @Service
@@ -59,38 +56,23 @@ class DefaultBookService implements BookService {
 		return 0;
 	}
 	@Override
-	public void addAuthor(long id, Author author) {
-		Optional.ofNullable(bookRepository.findOne(id)).ifPresent(
-				book -> book.add(author));
-	}
-	@Override
-	public void addGenre(long id, Genre genre) {
-		Optional.ofNullable(bookRepository.findOne(id)).ifPresent(
-				book -> book.add(genre));
-	}
-	@Override
-	public void setPublisher(long id, Publisher publisher) {
-		Optional.ofNullable(bookRepository.findOne(id)).ifPresent(
-				book -> book.setPublisher(publisher));
-	}
-	@Override
 	public Book findByIsbn(String isbn) {
 		return bookRepository.findByIsbn10(isbn);
 	}
 	@Override
-	public Page<Book> findByUser(String username, Pageable pageable) {
-		return bookRepository.findByUsers_Username(username, pageable);
+	public Page<Book> findByUser(long userId, Pageable pageable) {
+		return bookRepository.findByUserId(userId, pageable);
 	}
 	@Override
-	public Page<Book> findByYearAndUser(int year, String username, Pageable pageable) {
-		return bookRepository.findByYearAndUsers_Username(year, username, pageable);
+	public Page<Book> findByYearAndUser(int year, long userId, Pageable pageable) {
+		return bookRepository.findByYearAndUsers_UserId(year, userId, pageable);
 	}
 	@Override
-	public List<Integer> findDistinctYearsByUser(String username) {
-		return bookRepository.findDistinctYearsByUser(username);
+	public List<Integer> findDistinctYearsByUser(long userId) {
+		return bookRepository.findDistinctYearsByUser(userId);
 	}
 	@Override
-	public List<String> findDistinctFirstCharByUser(String username) {
-		return bookRepository.findDistinctFirstCharByUser(username);
+	public List<String> findDistinctFirstCharByUser(long userId) {
+		return bookRepository.findDistinctFirstCharByUser(userId);
 	}
 }
