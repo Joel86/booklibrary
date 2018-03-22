@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
@@ -21,10 +22,12 @@ public class UserBook implements Serializable {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@MapsId("bookId")
+	@JoinColumn(name = "bookId")
 	private Book book;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@MapsId("userId")
+	@JoinColumn(name = "userId")
 	private User user;
 	
 	private boolean read;
