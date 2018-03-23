@@ -2,32 +2,28 @@ package be.joelv.entities;
 
 import java.io.Serializable;
 
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 import javax.persistence.Table;
-
-import be.joelv.valueobjects.UserBookId;
 
 @Entity
 @Table(name = "user_books")
 public class UserBook implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@EmbeddedId
-	private UserBookId id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private long userBookId;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@MapsId("bookId")
-	@JoinColumn(name = "bookId")
 	private Book book;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@MapsId("userId")
-	@JoinColumn(name = "userId")
 	private User user;
 	
 	private boolean read;
@@ -37,19 +33,30 @@ public class UserBook implements Serializable {
 		this.book = book;
 		this.user = user;
 		this.read = read;
-		this.id = new UserBookId(book.getId(), user.getId());
 	}
 	public Book getBook() {
 		return book;
 	}
 	public void setBook(Book book) {
+		if(this.book != null && this.book.getUsers().contains(this)) {
+			this.book.remove(this);
+		}
 		this.book = book;
+		if(book != null && ! book.getUsers().contains(this)) {
+			book.add(this);
+		}
 	}
 	public User getUser() {
 		return user;
 	}
 	public void setUser(User user) {
+		if(this.user != null && this.user.getBooks().contains(this)) {
+			this.user.remove(this);
+		}
 		this.user = user;
+		if(user != null && ! user.getBooks().contains(this)) {
+			user.add(this);
+		}
 	}
 	public boolean isRead() {
 		return read;

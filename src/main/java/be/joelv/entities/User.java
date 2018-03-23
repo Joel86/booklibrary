@@ -2,7 +2,6 @@ package be.joelv.entities;
 
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -12,10 +11,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.Valid;
 
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
@@ -67,24 +64,16 @@ public class User implements Serializable {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public void add(Book book) {
-		UserBook userBook = new UserBook(book, this, false);
+	public void add(UserBook userBook) {
 		books.add(userBook);
-		if(!book.getUsers().contains(userBook)) {
-			book.add(this);
+		if(userBook.getUser() != this) {
+			userBook.setUser(this);
 		}
 	}
-	public void remove(Book book) {
-		for(Iterator<UserBook> iterator = books.iterator();
-				iterator.hasNext(); ) {
-			UserBook userBook = iterator.next();
-			if(userBook.getUser().equals(this) && 
-					userBook.getBook().equals(book)) {
-				iterator.remove();
-				userBook.getBook().getUsers().remove(userBook);
-				userBook.setBook(null);
-				userBook.setUser(null);
-			}
+	public void remove(UserBook userBook) {
+		books.remove(userBook);
+		if(userBook.getUser() == this) {
+			userBook.setUser(null);
 		}
 	}
 	public Set<UserBook> getBooks() {

@@ -13,6 +13,7 @@ import be.joelv.entities.Book;
 import be.joelv.entities.Genre;
 import be.joelv.entities.Publisher;
 import be.joelv.entities.User;
+import be.joelv.entities.UserBook;
 
 @Service
 class DefaultRegistrationService implements RegistrationService {
@@ -37,13 +38,13 @@ class DefaultRegistrationService implements RegistrationService {
 	public void register(long userid, Book book) {
 		Optional<User> optionalUser = userService.read(userid);
 		if(optionalUser.isPresent()) {
-	
+			
 			Book bookOutput = bookService.findByIsbn(book.getIsbn10());
 			if(bookOutput == null) {
 				bookOutput = new Book(book.getIsbn10(), book.getIsbn13(), book.getTitle(), book.getPages(), 
 						book.getYear(), book.getThumbnailUrl());
 			}
-
+			
 			Publisher publisher = publisherService.findByName(book.getPublisher().getName());
 			if(publisher == null) {
 				publisher = new Publisher(book.getPublisher().getName());
@@ -69,7 +70,10 @@ class DefaultRegistrationService implements RegistrationService {
 				}
 				bookOutput.add(genre);
 			}
-			bookOutput.add(optionalUser.get());
+			UserBook userBook = new UserBook();
+			userBook.setBook(bookOutput);
+			userBook.setUser(optionalUser.get());
+			userBook.setRead(false);
 		}
 	}
 	
@@ -79,31 +83,6 @@ class DefaultRegistrationService implements RegistrationService {
 	@Override
 	@Transactional(readOnly = false, isolation = Isolation.READ_COMMITTED)
 	public void unregister(long userid, long id) {
-		Optional<User> optionalUser = userService.read(userid);
-		if(optionalUser.isPresent()) {
-			Optional<Book> optionalBook = bookService.read(id);
-			if(optionalBook.isPresent()) {
-				Book book = optionalBook.get();
-				book.remove(optionalUser.get());
-				
-				for(Author author:book.getAuthors()) {
-					book.remove(author);
-					if(author.getBooks().size() == 0) {
-						authorService.delete(author);
-					}
-				}
-				
-				for(Genre genre:book.getGenres()) {
-					book.remove(genre);
-					if(genre.getBooks().size() == 0) {
-						genreService.delete(genre);
-					}
-				}
-					
-				if(book.getUsers().size() == 0) {
-					bookService.delete(book);
-				}
-			}
-		}
+
 	}
 }

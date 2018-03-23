@@ -2,7 +2,6 @@ package be.joelv.entities;
 
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -174,24 +173,16 @@ public class Book implements Serializable {
 	public Set<Genre> getGenres() {
 		return Collections.unmodifiableSet(genres);
 	}
-	public void add(User user) {
-		UserBook userBook = new UserBook(this, user, false);
+	public void add(UserBook userBook) {
 		users.add(userBook);
-		if(!user.getBooks().contains(userBook)) {
-			user.add(this);
+		if(userBook.getBook() != this) {
+			userBook.setBook(this);
 		}
 	}
-	public void remove(User user) {
-		for(Iterator<UserBook> iterator = users.iterator();
-				iterator.hasNext(); ) {
-			UserBook userBook = iterator.next();
-			if(userBook.getBook().equals(this) && 
-					userBook.getUser().equals(user)) {
-				iterator.remove();
-				userBook.getUser().getBooks().remove(userBook);
-				userBook.setBook(null);
-				userBook.setUser(null);
-			}
+	public void remove(UserBook userBook) {
+		users.remove(userBook);
+		if(userBook.getBook() == this) {
+			userBook.setBook(null);
 		}
 	}
 	public Set<UserBook> getUsers() {

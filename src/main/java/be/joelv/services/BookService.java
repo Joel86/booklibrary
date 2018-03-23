@@ -6,10 +6,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import be.joelv.entities.Author;
 import be.joelv.entities.Book;
-import be.joelv.entities.Genre;
-import be.joelv.entities.Publisher;
 
 
 public interface BookService {

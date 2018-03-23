@@ -59,10 +59,12 @@ class RestClientImpl implements RestClient {
 			Publisher publisher = new Publisher(volumeInfo.publisher);
 			Book book = new Book(isbn10, isbn13, title, pages, year, thumbnailUrl);
 			book.setPublisher(publisher);
-			for(String authorStr : volumeInfo.authors) {
-				String firstName = authorStr.substring(0, authorStr.indexOf(" "));
-				String lastName = authorStr.substring(authorStr.indexOf(" ") + 1);
-				book.add(new Author(firstName, lastName));
+			if(volumeInfo.authors != null) {
+				for(String authorStr : volumeInfo.authors) {
+					String firstName = authorStr.substring(0, authorStr.indexOf(" "));
+					String lastName = authorStr.substring(authorStr.indexOf(" ") + 1);
+					book.add(new Author(firstName, lastName));
+				}
 			}
 			if(volumeInfo.categories != null) {
 				for(String categoryStr : volumeInfo.categories) {

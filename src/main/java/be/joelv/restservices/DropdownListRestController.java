@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import be.joelv.entities.User;
 import be.joelv.services.BookService;
 import be.joelv.services.UserService;
 import be.joelv.valueobjects.BookStartingChars;
