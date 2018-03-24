@@ -61,11 +61,11 @@ class DefaultBookService implements BookService {
 	}
 	@Override
 	public Page<Book> findByUser(long userId, Pageable pageable) {
-		return bookRepository.findByUsers_UserId(userId, pageable);
+		return bookRepository.findByUsersUserId(userId, pageable);
 	}
 	@Override
 	public Page<Book> findByYearAndUser(int year, long userId, Pageable pageable) {
-		return bookRepository.findByYearAndUsers_UserId(year, userId, pageable);
+		return bookRepository.findByYearAndUsersUserId(year, userId, pageable);
 	}
 	@Override
 	public List<Integer> findDistinctYearsByUser(long userId) {

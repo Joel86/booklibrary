@@ -10,6 +10,6 @@ import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 public class DataSourceConfig {
 	@Bean
 	DataSource dataSource() {
-		return new JndiDataSourceLookup().getDataSource("jdbc/booklibrary");
+		return new JndiDataSourceLookup().getDataSource("jdbc/booklib");
 	}
 }

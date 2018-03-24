@@ -22,13 +22,16 @@ class DefaultRegistrationService implements RegistrationService {
 	private final AuthorService authorService;
 	private final GenreService genreService;
 	private final PublisherService publisherService;
-	DefaultRegistrationService(UserService userService, BookService bookService, AuthorService authorService,
-			GenreService genreService, PublisherService publisherService, BookDataService bookDataService) {
+	private final UserBookService userBookService;
+	DefaultRegistrationService(UserService userService, BookService bookService, 
+			AuthorService authorService, GenreService genreService, PublisherService publisherService, 
+			BookDataService bookDataService, UserBookService userBookService) {
 		this.userService = userService;
 		this.bookService = bookService;
 		this.authorService = authorService;
 		this.genreService = genreService;
 		this.publisherService = publisherService;
+		this.userBookService = userBookService;
 	}
 	/* (non-Javadoc)
 	 * @see be.joelv.services.RegistrationService#register(long, be.joelv.entities.Book)
@@ -70,10 +73,12 @@ class DefaultRegistrationService implements RegistrationService {
 				}
 				bookOutput.add(genre);
 			}
-			UserBook userBook = new UserBook();
-			userBook.setBook(bookOutput);
-			userBook.setUser(optionalUser.get());
-			userBook.setRead(false);
+			if(userBookService.findByBookIdAndUserId(bookOutput.getId(), optionalUser.get().getId()) == null) {
+				UserBook userBook = new UserBook();
+				userBook.setBook(bookOutput);
+				userBook.setUser(optionalUser.get());
+				userBook.setRead(false);
+			}
 		}
 	}
 	
