@@ -10,8 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import be.joelv.services.BookService;
 import be.joelv.services.UserService;
-import be.joelv.valueobjects.BookStartingChars;
-import be.joelv.valueobjects.BookYears;
+import be.joelv.valueobjects.BookFilterData;
 
 @RestController
 @RequestMapping("/books/mybooks")
@@ -22,15 +21,11 @@ class DropdownListRestController {
 		this.bookService = bookService;
 		this.userService = userService;
 	}
-	@GetMapping("years")
-	public BookYears getBookYearsByUser() {
+	@GetMapping("filter")
+	public BookFilterData getBookYearsByUser() {
 		List<Integer> years = bookService.findDistinctYearsByUser(getUserId());
-		return new BookYears(years);
-	}
-	@GetMapping("startingChars")
-	public BookStartingChars getBookStartingCharsByUser() {
 		List<String> chars = bookService.findDistinctFirstCharByUser(getUserId());
-		return new BookStartingChars(chars);
+		return new BookFilterData(years, chars);
 	}
 	private long getUserId() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();

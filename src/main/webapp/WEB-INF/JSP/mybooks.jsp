@@ -82,6 +82,7 @@
 	</c:if>
 	<script>
 	  var eYearFilterSelectBox = document.getElementById('yearFilterSelectBox');
+	  var eTitleFilterSelectBox = document.getElementById('titleFilterSelectBox');
 	  onetime(eYearFilterSelectBox, 'focus', handler);
 	  
 	  //function to ensure eventlistener fires only once
@@ -94,25 +95,15 @@
 	  }
 	  //handler function
 	  function handler(e) {
-	    getConnection('/booklibrary/books/mybooks/years');
-	  }
-	  
-	  function getConnection(url) {
 		  var request = new XMLHttpRequest();
-		  request.open("GET", url, true);
+		  request.open("GET", '/booklibrary/books/mybooks/filter', true);
 		  request.setRequestHeader('accept', 'application/json');
 		  request.onload = function(){
 			  switch(this.status) {
 			  case 200:
 				  var resource = JSON.parse(this.responseText);
-				  var resourcePath = resource.years;
-				  for(var i=0;i<resourcePath.length;i++) {
-					    var sYear = resourcePath[i];
-						var eOption = document.createElement('option');
-					    eOption.value = sYear;
-					    eOption.innerHTML = sYear;
-					    eYearFilterSelectBox.appendChild(eOption);
-					  }
+				  var resourcePathYears = resource.years;
+				  fillSelectBox(eYearFilterSelectBox, resourcePath);
 				  break;
 			  default:
 				  alert('technical problem');
@@ -120,6 +111,16 @@
 		  }
 		  request.send();
 		  return false;
+	  }
+	  
+	  function fillSelectBox(eSelectBox, aArray) {
+		  for(var i=0;i<aArray.length;i++) {
+			    var sYear = aArray[i];
+				var eOption = document.createElement('option');
+			    eOption.value = sYear;
+			    eOption.innerHTML = sYear;
+			    eSelectBox.appendChild(eOption);
+			  }
 	  }
 	</script>
 </body>
