@@ -25,7 +25,7 @@ public class Publisher implements Serializable {
 	@SafeHtml
 	@Column(unique=true)
 	private String name;
-	@OneToMany(mappedBy = "publisher")
+	@OneToMany(mappedBy = "publisher", orphanRemoval=true)
 	private Set<Book> books;
 	
 	public Publisher() {}

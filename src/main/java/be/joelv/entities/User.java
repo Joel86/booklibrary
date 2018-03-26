@@ -35,7 +35,7 @@ public class User implements Serializable {
 	@Length(min=6, max=20)
 	private String password;
 	@OneToMany(
-			mappedBy = "user", 
+			mappedBy = "user",
 			cascade = CascadeType.ALL,
 			orphanRemoval  = true)
 	private Set<UserBook> books = new LinkedHashSet<>();

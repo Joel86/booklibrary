@@ -18,4 +18,9 @@ class DefaultUserBookService implements UserBookService {
 	public UserBook findByBookIdAndUserId(long bookId, long userId) {
 		return UserBookRepository.findByBookIdAndUserId(bookId, userId);
 	}
+	@Override
+	@Transactional(readOnly = false, isolation = Isolation.READ_COMMITTED)
+	public void delete(UserBook userBook) {
+		UserBookRepository.delete(userBook);
+	}
 }

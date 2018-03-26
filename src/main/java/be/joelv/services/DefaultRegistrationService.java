@@ -88,6 +88,32 @@ class DefaultRegistrationService implements RegistrationService {
 	@Override
 	@Transactional(readOnly = false, isolation = Isolation.READ_COMMITTED)
 	public void unregister(long userid, long id) {
-
+		Optional<User> optionalUser = userService.read(userid);
+		if(optionalUser.isPresent()) {
+			Optional<Book> optionalBook = bookService.read(id);
+			if(optionalBook.isPresent()) {
+				Book book = optionalBook.get();
+				UserBook userBook = userBookService.findByBookIdAndUserId(book.getId(), optionalUser.get().getId());
+				userBookService.delete(userBook);
+						
+				for(Author author:book.getAuthors()) {
+					book.remove(author);
+					if(author.getBooks().size() == 0) {
+						authorService.delete(author);
+					}
+				}
+						
+				for(Genre genre:book.getGenres()) {
+					book.remove(genre);
+					if(genre.getBooks().size() == 0) {
+						genreService.delete(genre);
+					}
+				}
+				
+				if(book.getUsers().size() == 0) {
+					bookService.delete(book);
+				}
+			}
+		}
 	}
 }

@@ -26,7 +26,7 @@ public class UserBook implements Serializable {
 	@JoinColumn(name = "bookId")
 	private Book book;
 	
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	@JoinColumn(name = "userId")
 	private User user;
 	
