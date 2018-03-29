@@ -102,7 +102,7 @@
 			  switch(this.status) {
 			  case 200:
 				  var resource = JSON.parse(this.responseText);
-				  var resourcePathYears = resource.years;
+				  var resourcePath = resource.years;
 				  fillSelectBox(eYearFilterSelectBox, resourcePath);
 				  break;
 			  default:
