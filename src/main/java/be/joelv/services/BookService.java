@@ -20,6 +20,7 @@ public interface BookService {
 	Page<Book> findByUser(long userId, Pageable pageable);
 	Page<Book> findByYearAndUser(int year, long userId, 
 			Pageable pageable);
+	Page<Book> findByTitleandUser(String title, long userId, Pageable pageable);
 	List<Integer> findDistinctYearsByUser(long userId);
 	List<String> findDistinctFirstCharByUser(long userId);
 }

@@ -75,4 +75,8 @@ class DefaultBookService implements BookService {
 	public List<String> findDistinctFirstCharByUser(long userId) {
 		return bookRepository.findDistinctFirstCharByUser(userId);
 	}
+	@Override
+	public Page<Book> findByTitleandUser(String title, long userId, Pageable pageable) {
+		return bookRepository.findByTitleStartingWithAndUsersUserId(title, userId, pageable);
+	}
 }

@@ -83,8 +83,8 @@
 	<script>
 	  var eYearFilterSelectBox = document.getElementById('yearFilterSelectBox');
 	  var eTitleFilterSelectBox = document.getElementById('titleFilterSelectBox');
-	  onetime(eYearFilterSelectBox, 'focus', handler);
-	  
+	  onetime(eYearFilterSelectBox, 'focus', handler(eYearFilterSelectBox, 'years'));
+	  onetime(eTitleFilterSelectBox, 'focus', handler(eTitleFilterSelectBox, 'chars'));
 	  //function to ensure eventlistener fires only once
 	  function onetime(node, type, callback){
 		 //create event
@@ -94,7 +94,7 @@
 		 });
 	  }
 	  //handler function
-	  function handler(e) {
+	  function handler(eSelectBox, property) {
 		  var request = new XMLHttpRequest();
 		  request.open("GET", '/booklibrary/books/mybooks/filter', true);
 		  request.setRequestHeader('accept', 'application/json');
@@ -102,8 +102,8 @@
 			  switch(this.status) {
 			  case 200:
 				  var resource = JSON.parse(this.responseText);
-				  var resourcePath = resource.years;
-				  fillSelectBox(eYearFilterSelectBox, resourcePath);
+				  var resourcePath = resource[property];
+				  fillSelectBox(eSelectBox, resourcePath);
 				  break;
 			  default:
 				  alert('technical problem');

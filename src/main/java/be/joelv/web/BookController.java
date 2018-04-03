@@ -18,9 +18,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import be.joelv.entities.Book;
 import be.joelv.entities.User;
+import be.joelv.entities.UserBook;
 import be.joelv.services.BookDataService;
 import be.joelv.services.BookService;
 import be.joelv.services.RegistrationService;
+import be.joelv.services.UserBookService;
 import be.joelv.services.UserService;
 
 @Controller
@@ -35,16 +37,19 @@ class BookController {
 	private final BookService bookService;
 	private final BookDataService bookDataService;
 	private final UserService userService;
+	private final UserBookService userBookService;
 	private final String bookDataURL;
 	private final String apiKey;
 	BookController(RegistrationService registrationService, BookService bookService, 
 			BookDataService bookDataService, UserService userService, 
+			UserBookService userBookService, 
 			@Value ("${openLibraryData}") String bookDataURL, 
 			@Value ("${apiKey}") String apiKey) {
 		this.registrationService = registrationService;
 		this.bookService = bookService;
 		this.bookDataService = bookDataService;
 		this.userService = userService;
+		this.userBookService = userBookService;
 		this.bookDataURL = bookDataURL;
 		this.apiKey = apiKey;
 	}
@@ -60,9 +65,15 @@ class BookController {
 		return new ModelAndView(MY_BOOKS_VIEW).addObject("page", page);
 	}
 	@GetMapping(value="mybooks", params="year")
-	ModelAndView myBooksFiltered(int year, User user, Pageable pageable) {
+	ModelAndView myBooksFilteredByYear(int year, User user, Pageable pageable) {
 		long userId = getUserId();
 		Page<Book> page = bookService.findByYearAndUser(year, userId, pageable);
+		return new ModelAndView(MY_BOOKS_VIEW).addObject("page", page);
+	}
+	@GetMapping(value="mybooks", params="title")
+	ModelAndView myBooksFilteredByTitle(String title, User user, Pageable pageable) {
+		long userId = getUserId();
+		Page<Book> page = bookService.findByTitleandUser(title, userId, pageable);
 		return new ModelAndView(MY_BOOKS_VIEW).addObject("page", page);
 	}
 	@GetMapping("{id}")

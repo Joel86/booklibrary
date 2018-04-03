@@ -10,17 +10,17 @@ import be.joelv.repositories.UserBookRepository;
 @Service
 @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
 class DefaultUserBookService implements UserBookService {
-	private final UserBookRepository UserBookRepository;
+	private final UserBookRepository userBookRepository;
 	DefaultUserBookService(UserBookRepository userBookRepository) {
-		this.UserBookRepository = userBookRepository;
+		this.userBookRepository = userBookRepository;
 	}
 	@Override
 	public UserBook findByBookIdAndUserId(long bookId, long userId) {
-		return UserBookRepository.findByBookIdAndUserId(bookId, userId);
+		return userBookRepository.findByBookIdAndUserId(bookId, userId);
 	}
 	@Override
 	@Transactional(readOnly = false, isolation = Isolation.READ_COMMITTED)
 	public void delete(UserBook userBook) {
-		UserBookRepository.delete(userBook);
+		userBookRepository.delete(userBook);
 	}
 }
